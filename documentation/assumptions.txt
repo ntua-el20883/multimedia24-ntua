@@ -1,0 +1,38 @@
+### Suggested Assumptions for Task Status Management
+
+1. **Open**: 
+   - This is the default status for all new tasks.
+   - The user should not manually set a task to “Open” once it’s been updated to another status. 
+   - The task leaves the “Open” status when it is either marked as "In Progress," "Completed," "Postponed," or if the deadline is missed and it changes to "Delayed."
+
+2. **In Progress**:
+   - The user can manually set the task to “In Progress” when they begin working on it.
+   - This transition makes sense as a step from "Open" and before the task reaches "Completed" or another terminal state.
+
+3. **Postponed**:
+   - The user can manually set the task to “Postponed” to indicate that it’s on hold.
+   - This can happen at any stage before the task is completed or delayed.
+   - For instance, a task might go from "Open" or "In Progress" to "Postponed" if the user needs to pause work for some reason.
+
+4. **Completed**:
+   - The user can mark a task as “Completed” once it’s finished, regardless of its prior status (Open, In Progress, or Postponed).
+   - When the status changes to “Completed,” all reminders for the task should be removed automatically, as the task no longer needs notifications.
+   - This should be a terminal status, meaning that once a task is completed, its status should no longer be modifiable.
+
+5. **Delayed**:
+   - This status is automatically set by the system if the current date surpasses the task’s deadline and the task is not yet completed.
+   - Like “Completed,” this status should not be manually set by the user.
+   - The task can remain "Delayed" until it’s marked "Completed" by the user.
+
+### Additional Logic for Status Transitions
+
+To maintain this status flow, I will:
+1. Restrict the possible transitions based on the task’s current status.
+2. Automatically trigger status updates where appropriate.
+
+Here’s a possible logical flow for the transitions:
+
+- **Open → In Progress → Completed**
+- **Open → Postponed → In Progress → Completed**
+- **Open or In Progress → Delayed → Completed**
+- **Postponed → Completed or In Progress**
