@@ -5,17 +5,21 @@ import javafx.scene.control.Alert.AlertType;
 import model.Task;
 import storage.DataStore;
 import view.MainView;
+import view.TaskManagementView;
 
 import java.time.LocalDate;
 import java.util.List;
 
 public class MainController {
 
+    private static MainController instance;
+
     private DataStore dataStore;
     private MainView mainView;
 
     public MainController() {
         dataStore = DataStore.getInstance();
+        instance = this;
     }
 
     // Initialize data (load from JSON)
@@ -27,15 +31,28 @@ public class MainController {
     public void setMainView(MainView mainView) {
         this.mainView = mainView;
         // Assign button actions
-        this.mainView.getTaskManagementBtn().setOnAction(e -> handleTaskManagement());
+        this.mainView.getTaskManagementBtn().setOnAction(e -> openTaskManagementWindow());
         this.mainView.getCategoryManagementBtn().setOnAction(e -> handleCategoryManagement());
         this.mainView.getPriorityManagementBtn().setOnAction(e -> handlePriorityManagement());
         this.mainView.getReminderManagementBtn().setOnAction(e -> handleReminderManagement());
     }
 
+    // Method to open Task Management Window
+    private void openTaskManagementWindow() {
+        TaskManagementView taskView = new TaskManagementView(mainView.getStage(), dataStore.getAllTasks());
+        TaskManagementController taskController = new TaskManagementController(taskView);
+        taskView.getStage().showAndWait();
+    }
+
+    // Getter for singleton instance
+    public static MainController getInstance() {
+        return instance;
+    }
+
     // Update statistics labels
     public void updateStatistics() {
-        if(mainView == null) return;
+        if (mainView == null)
+            return;
 
         List<Task> tasks = dataStore.getAllTasks();
 
@@ -52,9 +69,9 @@ public class MainController {
         mainView.getDelayedTasksLabel().setText("Delayed Tasks: " + delayed);
 
         long upcoming = tasks.stream()
-                .filter(task -> task.getStatus().equalsIgnoreCase("Open") || 
-                                task.getStatus().equalsIgnoreCase("In Progress") || 
-                                task.getStatus().equalsIgnoreCase("Postponed"))
+                .filter(task -> task.getStatus().equalsIgnoreCase("Open") ||
+                        task.getStatus().equalsIgnoreCase("In Progress") ||
+                        task.getStatus().equalsIgnoreCase("Postponed"))
                 .filter(task -> dataStore.isTaskDueInDays(task, 7))
                 .count();
         mainView.getUpcomingTasksLabel().setText("Tasks Due in 7 Days: " + upcoming);
@@ -106,20 +123,19 @@ public class MainController {
     }
 
     public void updateTaskStatuses() {
-    List<Task> tasks = dataStore.getAllTasks();
-    boolean updated = false;
+        List<Task> tasks = dataStore.getAllTasks();
+        boolean updated = false;
 
-    for (Task task : tasks) {
-        if (!task.getStatus().equalsIgnoreCase("Completed") && 
-            task.getDeadline().isBefore(LocalDate.now())) {
-            task.setStatus("Delayed");
-            updated = true;
+        for (Task task : tasks) {
+            if (!task.getStatus().equalsIgnoreCase("Completed") &&
+                    task.getDeadline().isBefore(LocalDate.now())) {
+                task.setStatus("Delayed");
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            dataStore.saveAllData();
         }
     }
-
-    if (updated) {
-        dataStore.saveAllData();
-    }
-}
-
 }

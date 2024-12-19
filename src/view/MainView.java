@@ -159,4 +159,8 @@ public class MainView {
     public Button getReminderManagementBtn() {
         return reminderManagementBtn;
     }
+
+    public Stage getStage() {
+        return stage;
+    }    
 }
