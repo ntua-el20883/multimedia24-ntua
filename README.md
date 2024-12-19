@@ -72,6 +72,7 @@ Follow these steps to set up your environment successfully.
    - [**jackson-annotations-2.18.1.jar**](https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.18.1/)
    - [**jackson-core-2.18.1.jar**](https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.18.1/)
    - [**jackson-databind-2.18.1.jar**](https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.18.1/)
+   - [**jackson-datatype-j*sr310**](https://repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.18.1/jackson-datatype-jsr310-2.18.1.jar)
 
 2. **Place Files in the `lib` Directory**  
    After downloading, move the `.jar` files to:  

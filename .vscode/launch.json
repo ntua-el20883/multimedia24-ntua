@@ -12,7 +12,8 @@
                 "lib/javafx-sdk-23.0.1/lib/*",
                 "lib/jackson-annotations-2.18.1.jar",
                 "lib/jackson-core-2.18.1.jar",
-                "lib/jackson-databind-2.18.1.jar"
+                "lib/jackson-databind-2.18.1.jar",
+                "lib/jackson-datatype-jsr310-2.18.1.jar"
             ]
         }
     ]

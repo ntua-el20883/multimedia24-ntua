@@ -1,342 +1,231 @@
-## **Step 2: Implement the Main Application Class**
+I'm thrilled to hear that your application is now functioning correctly! Congratulations on successfully navigating through the challenges and achieving the desired outcomes. Let's **review your progress**, ensure **step 3** is complete, and outline the **future steps** to further enhance your application.
 
-The `App.java` class serves as the entry point for your JavaFX application. It initializes and displays the primary stage (window).
+---
 
-1. **Location:** `src/app/App.java`
+## **1. Recap of Steps Taken So Far**
 
-2. **Responsibilities:**
-   - Extend `javafx.application.Application`.
-   - Override the `start` method to set up the primary stage.
-   - Load the `main_view.fxml` to construct the main user interface.
-   - Apply the `styles.css` for consistent styling.
+### **Step 1: Project Setup**
+- **Initialized the Project Structure:**
+  - Created essential directories: `src/`, `bin/`, `lib/`, and `medialab/`.
+- **Configured Build Settings:**
+  - Set up `launch.json` and `settings.json` to include necessary libraries and specify source/output paths.
+- **Added Dependencies:**
+  - Included JavaFX libraries and Jackson libraries (`jackson-annotations`, `jackson-core`, `jackson-databind`, `jackson-datatype-jsr310`) in the `lib/` directory.
+  
+### **Step 2: Implemented MVC Components**
+- **Model Classes:**
+  - Defined `Task`, `Category`, `Priority`, and `Reminder` classes with appropriate fields and annotations.
+- **Storage Layer:**
+  - Created `JSONHandler.java` to manage loading and saving data from/to JSON files.
+  - Implemented `DataStore.java` as a singleton to maintain and provide access to application data.
+- **View Components:**
+  - Developed `MainView.java` to construct the primary UI using JavaFX, including labels for statistics and buttons for management functionalities.
+- **Controller:**
+  - Built `MainController.java` to handle data initialization, statistics updates, and button actions.
+  
+### **Step 3: Enhanced Functionality and Scheduled Tasks**
+- **Resolved Jackson `LocalDate` Issue:**
+  - Added `jackson-datatype-jsr310` module to handle Java 8 date/time types.
+  - Updated `JSONHandler.java` to register the `JavaTimeModule` with `ObjectMapper`.
+- **Implemented Scheduled Status Updates:**
+  - Modified `App.java` to include a `ScheduledExecutorService` that periodically updates task statuses based on deadlines.
+  - Added `updateTaskStatuses()` in `MainController.java` to automate status changes (e.g., marking tasks as "Delayed" if past deadline).
+- **Debugging and Testing:**
+  - Added debug statements to verify data loading and application behavior.
+  - Populated JSON files with sample data to test statistics and data persistence.
+  - Ensured that data is correctly loaded from JSON files and that statistics reflect the loaded data.
+  
+**Current Status After Step 3:**
+- **Application Launches Successfully:** Displays correct statistics based on JSON data.
+- **Data Persistence:** JSON files retain data upon application exit.
+- **Scheduled Tasks Functioning:** Automatically updates task statuses as per deadlines.
+- **UI Interactivity:** Management buttons display placeholder alerts, indicating readiness for further feature implementation.
 
-3. **Basic Implementation Overview:**
+---
 
-   - **Initialize JavaFX Application:**
-     - Launch the application.
-     - Set the title to "MediaLab Assistant".
+## **2. Status of Step 3**
+
+Based on your recent updates and successful testing, **Step 3** is **fully completed**. You've:
+
+- **Resolved Key Technical Issues:** Ensured proper handling of Java 8 `LocalDate` types with Jackson.
+- **Implemented Core Functionalities:** Loaded data correctly, displayed accurate statistics, and set up scheduled tasks for status updates.
+- **Ensured Data Integrity:** Confirmed that JSON files are neither emptied nor corrupted upon application closure.
+
+**Congratulations on completing Step 3!** Your application now has a solid foundation with robust data handling and dynamic UI updates.
+
+---
+
+## **3. Future Steps and Recommendations**
+
+With the core functionalities in place, it's time to enhance your application further. Below are the **next steps** you can follow to build a comprehensive task management system.
+
+### **A. Implement Management Functionalities**
+
+1. **Task Management:**
+   - **Features to Implement:**
+     - **Add New Tasks:** Allow users to create new tasks with all necessary details.
+     - **Edit Existing Tasks:** Enable modification of task attributes.
+     - **Delete Tasks:** Provide functionality to remove tasks.
+     - **View Task Details:** Display comprehensive information about a selected task.
+   - **UI Implementation:**
+     - Create a dedicated window or dialog for managing tasks.
+     - Use forms with input fields corresponding to the `Task` model (title, description, category, priority, deadline, status).
    
-   - **Load FXML Layout:**
-     - Use `FXMLLoader` to load `main_view.fxml`.
-   
-   - **Apply CSS Styling:**
-     - Attach `styles.css` to the scene for UI styling.
+2. **Category Management:**
+   - **Features to Implement:**
+     - **Add New Categories:** Users can define new task categories.
+     - **Edit Categories:** Modify existing category names.
+     - **Delete Categories:** Remove categories (ensure tasks associated with deleted categories are handled appropriately).
+   - **UI Implementation:**
+     - Develop a management window for categories with list views and action buttons.
 
-4. **Next Steps:**
-   
-   - Implement `App.java` with the above responsibilities.
-   - Ensure that running the application displays an empty window based on `main_view.fxml`.
+3. **Priority Management:**
+   - **Features to Implement:**
+     - **Define Priority Levels:** Allow users to create new priority levels with names and values.
+     - **Edit Priorities:** Modify existing priority attributes.
+     - **Delete Priorities:** Remove priority levels (ensure tasks with deleted priorities are handled).
+   - **UI Implementation:**
+     - Similar to category management, with interfaces to manage priority levels.
 
-## **Step 3: Design the Main View FXML**
+4. **Reminder Management:**
+   - **Features to Implement:**
+     - **Set Reminders:** Assign reminders to specific tasks.
+     - **Edit Reminders:** Modify reminder dates.
+     - **Delete Reminders:** Remove reminders from tasks.
+   - **UI Implementation:**
+     - Create interfaces to manage reminders, possibly integrating date pickers for selecting reminder dates.
 
-The `main_view.fxml` file defines the layout of your application's primary window. It structures the GUI as per your project specifications.
+### **B. Enhance User Interface and Experience**
 
-1. **Location:** `resources/fxml/main_view.fxml`
+1. **Responsive Design:**
+   - Ensure that the UI adapts gracefully to different window sizes and screen resolutions.
+   - Utilize layout managers (`VBox`, `HBox`, `GridPane`, etc.) effectively to organize components.
 
-2. **Responsibilities:**
-   - Define the overall layout using JavaFX containers (e.g., `BorderPane`, `GridPane`).
-   - Create a header titled "MediaLab Assistant" positioned at the top left.
-   - Divide the central area into two halves (top and bottom), each containing four cells arranged in a 2x4 grid.
+2. **Visual Improvements:**
+   - **Styling:**
+     - Apply consistent styles to buttons, labels, and other UI elements.
+     - Consider using CSS for more advanced styling options.
+   - **Icons and Images:**
+     - Integrate icons for buttons to improve visual appeal and user intuitiveness.
+   - **Themes:**
+     - Implement light and dark modes to enhance user experience.
 
-3. **Layout Components:**
+### **C. Implement Search and Filtering Capabilities**
 
-   - **Header:**
-     - Use an `HBox` or `VBox` to position the header.
-     - Include a `Label` with the text "MediaLab Assistant".
-   
-   - **Central Area:**
-     - Utilize a `GridPane` or nested `GridPane` structures to organize cells 1-8.
-     - **Top Half (Cells 1-4):**
-       - Each cell can be a `VBox` or `Pane` containing a `Label` to display dynamic data.
-     - **Bottom Half (Cells 5-8):**
-       - Each cell contains a `Button` that navigates to the respective management page.
+1. **Search Functionality:**
+   - Allow users to search for tasks based on titles, descriptions, categories, or priorities.
+   - Implement search bars or filters in the task management interface.
 
-4. **Next Steps:**
-   
-   - Design the FXML layout with placeholders for each cell.
-   - Assign `fx:id` attributes to key components to facilitate interaction from the controller.
-   - Ensure that the layout aligns with the project’s visual requirements.
+2. **Filtering Options:**
+   - Enable filtering tasks by status (e.g., Open, In Progress, Completed, Delayed).
+   - Provide sorting options (e.g., by deadline, priority).
 
-## **Step 4: Develop the Main Controller**
+### **D. Add Data Validation and Error Handling**
 
-The `MainController.java` manages the interactions and dynamic updates within the `main_view.fxml`.
+1. **Input Validation:**
+   - Ensure that users provide valid and complete information when adding or editing tasks.
+   - Validate date formats, non-empty fields, and logical consistency (e.g., deadline dates should not be in the past when creating new tasks).
 
-1. **Location:** `src/view/controllers/MainController.java`
+2. **Error Handling:**
+   - Implement robust error handling to manage exceptions gracefully.
+   - Provide user-friendly error messages to guide users in correcting issues.
 
-2. **Responsibilities:**
-   - Initialize UI components defined in `main_view.fxml`.
-   - Update cells 1-4 with real-time data (e.g., total tasks, completed tasks).
-   - Handle button actions in cells 5-8 to navigate to different management pages.
-   - Ensure that data displayed reflects the current state of the application.
+### **E. Implement Notifications and Alerts**
 
-3. **Key Functionalities:**
+1. **Real-Time Notifications:**
+   - Notify users of upcoming deadlines or overdue tasks.
+   - Use JavaFX dialogs or integrate system notifications for timely alerts.
 
-   - **Data Binding:**
-     - Bind task statistics to the respective labels in cells 1-4.
-     - Use observable lists or properties to reflect changes dynamically.
-   
-   - **Navigation:**
-     - Implement event handlers for buttons in cells 5-8.
-     - Load and display the corresponding management views when buttons are clicked.
+2. **Reminder Integration:**
+   - Enhance the reminder system to trigger notifications based on set reminder dates.
 
-4. **Next Steps:**
-   
-   - Link `MainController.java` to `main_view.fxml` using the `fx:controller` attribute.
-   - Implement initialization logic to fetch and display task statistics.
-   - Develop navigation methods to switch scenes or load new FXML layouts.
+### **F. Data Backup and Export Features**
 
-## **Step 5: Define Data Models**
+1. **Automatic Backups:**
+   - Implement a system to create backups of JSON files periodically to prevent data loss.
 
-Creating robust data models is essential for managing your application's core entities. These models will interact with the storage layer and be utilized by the GUI.
+2. **Export Functionality:**
+   - Allow users to export task data to formats like CSV or PDF for reporting or backup purposes.
 
-1. **Location:** `src/model/`
+### **G. Testing and Quality Assurance**
 
-2. **Entities to Implement:**
-   
-   - **`Task.java`:**
-     - Attributes: `title`, `description`, `category`, `priority`, `deadline`, `status`.
-     - Behaviors: Update status based on deadlines, manage associated reminders.
-   
-   - **`Category.java`:**
-     - Attribute: `name`.
-     - Behaviors: Manage association with tasks.
-   
-   - **`Priority.java`:**
-     - Attributes: `name`, `value`.
-     - Behaviors: Ensure unique values, protect default priority.
-   
-   - **`Reminder.java`:**
-     - Attribute: `date`.
-     - Behaviors: Associate with tasks, manage based on task status.
+1. **Unit Testing:**
+   - Write unit tests for your models, storage layer, and controller logic to ensure reliability.
 
-3. **Implementation Guidelines:**
-   
-   - **Encapsulation:**
-     - Use private fields with public getters and setters.
-   
-   - **JSON Compatibility:**
-     - Ensure that models are compatible with Jackson for serialization/deserialization.
-     - Use annotations if necessary (e.g., `@JsonProperty`).
-   
-   - **Business Logic:**
-     - Implement methods that encapsulate behaviors, such as updating task status or validating deadlines.
+2. **User Acceptance Testing:**
+   - Gather feedback from potential users to refine features and improve usability.
 
-4. **Next Steps:**
-   
-   - Implement each data model class with the specified attributes and behaviors.
-   - Ensure that each class can be serialized and deserialized to/from JSON using Jackson.
-   - Write unit tests (optional) to verify the correctness of your models.
+3. **Performance Optimization:**
+   - Ensure that the application performs efficiently, especially as the volume of data grows.
 
-## **Step 6: Implement Storage Mechanism**
+---
 
-Your application requires persistent storage to maintain data between sessions. Implementing a reliable storage mechanism using JSON is crucial.
+## **4. Actionable Steps to Proceed**
 
-1. **Location:** `src/storage/`
+Based on your current progress and the outlined future steps, here's a **roadmap** to guide your next actions:
 
-2. **Classes to Implement:**
-   
-   - **`JSONHandler.java`:**
-     - **Purpose:** Handles the serialization and deserialization of Java objects to and from JSON using Jackson.
-     - **Responsibilities:**
-       - Provide methods to read JSON files and convert them into Java objects.
-       - Convert Java objects into JSON format and write them to files.
-       - Manage exceptions related to file I/O and JSON processing.
-   
-   - **`DataStore.java`:**
-     - **Purpose:** Acts as a centralized manager for all data operations.
-     - **Responsibilities:**
-       - Initialize data by loading JSON files into in-memory collections.
-       - Provide methods to retrieve, add, modify, and delete data entities.
-       - Ensure data consistency and integrity during CRUD operations.
-       - Handle saving the current state back to JSON files upon application termination.
+1. **Implement Task Management Window:**
+   - Design the UI for adding, editing, and deleting tasks.
+   - Link UI actions to controller methods to manipulate task data.
 
-3. **Implementation Guidelines:**
-   
-   - **Singleton Pattern (Optional):**
-     - Consider implementing `DataStore` as a singleton to ensure a single source of truth for data throughout the application.
-   
-   - **Thread Safety:**
-     - If your application will be multi-threaded, ensure that data operations are thread-safe.
-   
-   - **Error Handling:**
-     - Implement robust error handling to manage scenarios like missing files, corrupted JSON, or invalid data.
+2. **Develop Category and Priority Management Interfaces:**
+   - Create separate windows or tabs for managing categories and priorities.
+   - Ensure that changes in categories and priorities are reflected across tasks.
 
-4. **Next Steps:**
-   
-   - Develop `JSONHandler.java` with methods for reading and writing JSON data.
-   - Implement `DataStore.java` to manage in-memory data and interact with `JSONHandler`.
-   - Initialize `DataStore` in `App.java` during application startup.
-   - Ensure that data is saved back to JSON files when the application is closing. This can be handled by overriding the `stop` method in `App.java`.
+3. **Integrate Reminders with Notifications:**
+   - Enhance the reminder system to provide timely alerts.
+   - Consider using JavaFX's `Timeline` or other scheduling mechanisms for notifications.
 
-## **Step 7: Build the User Interface for Management Pages**
+4. **Enhance UI Styling:**
+   - Apply CSS to style your JavaFX application for a more polished look.
+   - Experiment with different layouts and components to improve user experience.
 
-Each management page (Task, Category, Priority, Reminder) requires its own FXML layout and corresponding controller to handle user interactions.
+5. **Add Search and Filtering Features:**
+   - Implement search bars and filter options in the task management interface.
+   - Ensure that search and filter operations are efficient and intuitive.
 
-1. **Locations:**
-   
-   - FXML Files: `resources/fxml/`
-     - `task_view.fxml`
-     - `category_view.fxml`
-     - `priority_view.fxml`
-     - `reminder_view.fxml`
-   
-   - Controller Classes: `src/view/controllers/`
-     - `TaskController.java`
-     - `CategoryController.java`
-     - `PriorityController.java`
-     - `ReminderController.java`
+6. **Implement Data Validation:**
+   - Add validation logic to prevent invalid data entries.
+   - Provide user feedback for validation errors.
 
-2. **Responsibilities:**
-   
-   - **FXML Files:**
-     - Define the layout and UI components for each management page.
-     - Include elements like tables or lists to display entities, forms for CRUD operations, and buttons for actions.
-   
-   - **Controller Classes:**
-     - Handle user interactions within the management pages.
-     - Interface with `DataStore` to perform CRUD operations.
-     - Update the UI based on data changes (e.g., refreshing tables after adding a new task).
+7. **Set Up Data Backup Mechanism:**
+   - Implement automatic backups of JSON files at regular intervals or upon significant data changes.
 
-3. **Implementation Guidelines:**
-   
-   - **Consistent Design:**
-     - Ensure that each management page follows a consistent design pattern for usability.
-   
-   - **Data Binding:**
-     - Utilize JavaFX's property binding to synchronize UI components with underlying data models.
-   
-   - **Validation:**
-     - Implement input validation to ensure data integrity (e.g., validating date formats, ensuring unique priority values).
+8. **Write Unit Tests:**
+   - Begin writing tests for critical components to ensure they function as expected.
 
-4. **Next Steps:**
-   
-   - Start with one management page (e.g., Task Management) to implement its FXML and controller.
-   - Gradually replicate the pattern for other management pages.
-   - Test each management page thoroughly to ensure correct functionality before moving on to the next.
+---
 
-## **Step 8: Style the Application with CSS**
+## **5. Final Recommendations**
 
-The `styles.css` file enhances the visual appeal of your application, ensuring a consistent and professional look.
+- **Incremental Development:**
+  - Tackle one feature at a time to maintain focus and ensure stability.
+  - Test each feature thoroughly before moving on to the next.
 
-1. **Location:** `resources/css/styles.css`
+- **Version Control:**
+  - Use a version control system like Git to track changes and manage your project's evolution.
+  - Commit changes regularly with meaningful messages to document progress.
 
-2. **Responsibilities:**
-   
-   - Define styles for UI components such as buttons, labels, tables, and layouts.
-   - Implement themes or color schemes that align with your project's branding or aesthetic preferences.
-   - Enhance user experience by improving readability and navigability.
+- **Documentation:**
+  - Maintain clear documentation for your codebase to facilitate maintenance and future enhancements.
+  - Consider generating API documentation using tools like Javadoc.
 
-3. **Implementation Guidelines:**
-   
-   - **Selectors:**
-     - Use JavaFX-specific selectors (e.g., `.button`, `.label`) to target UI components.
-   
-   - **Consistency:**
-     - Maintain a consistent style across different pages and components.
-   
-   - **Responsiveness:**
-     - Ensure that styles adapt well to different window sizes and resolutions.
+- **User Feedback:**
+  - Engage potential users early to gather feedback and tailor features to their needs.
+  - Iterate on feedback to refine functionalities and improve usability.
 
-4. **Next Steps:**
-   
-   - Define base styles for common components in `styles.css`.
-   - Apply classes or IDs to FXML components to target them in CSS.
-   - Iterate on styles as you develop more UI components to ensure a cohesive design.
+- **Stay Organized:**
+  - Keep your codebase clean and well-structured.
+  - Adhere to coding standards and best practices to enhance readability and maintainability.
 
-## **Step 9: Implement Utility Functions**
+---
 
-Utility classes provide reusable methods that simplify common tasks, enhancing code maintainability and reducing redundancy.
+## **6. Conclusion**
 
-1. **Location:** `src/util/DateUtils.java`
+You've made significant progress in developing your **MediaLab Assistant** application, successfully overcoming initial hurdles and establishing a robust foundation. With **step 3** complete, you're well-positioned to enhance your application with comprehensive management features, improved UI/UX, and additional functionalities that will make your task management system both powerful and user-friendly.
 
-2. **Responsibilities:**
-   
-   - Provide methods for date manipulation, such as:
-     - Validating date formats.
-     - Calculating deadlines and reminders.
-     - Formatting dates for display or storage.
-   
-   - Handle date-related constraints, such as checking if a deadline has passed.
-
-3. **Implementation Guidelines:**
-   
-   - **Static Methods:**
-     - Implement utility methods as static to allow easy access without instantiating the class.
-   
-   - **Error Handling:**
-     - Ensure methods handle invalid inputs gracefully, possibly throwing custom exceptions or returning default values.
-
-4. **Next Steps:**
-   
-   - Implement methods like `isPastDeadline(Date deadline)`, `formatDate(Date date)`, `parseDate(String dateString)`, etc.
-   - Utilize these methods across your application wherever date operations are required.
-
-## **Step 10: Integrate All Components and Test**
-
-Once you've implemented the core components, it's time to integrate them and ensure that everything works harmoniously.
-
-1. **Run the Application:**
-   
-   - Execute `App.java` to launch the JavaFX application.
-   - Verify that the main window appears as designed in `main_view.fxml`.
-   - Ensure that styles from `styles.css` are applied correctly.
-
-2. **Test Navigation:**
-   
-   - Click on the management buttons in cells 5-8 to navigate to respective pages.
-   - Ensure that each management page loads correctly without errors.
-
-3. **Validate Data Models and Storage:**
-   
-   - Create sample data entries using the management pages.
-   - Verify that data is correctly saved to the respective JSON files in the `medialab/` directory.
-   - Restart the application to ensure that data persists and is loaded accurately.
-
-4. **Check Dynamic Updates:**
-   
-   - Ensure that cells 1-4 in the main view update based on the current state of tasks.
-   - For example, adding a new task should increment the total tasks count.
-
-5. **Handle Edge Cases:**
-   
-   - Test scenarios like deleting a category with existing tasks or marking a task as completed and ensuring associated reminders are deleted.
-   - Validate that priority constraints (e.g., unique values) are enforced.
-
-6. **Iterate and Refine:**
-   
-   - Based on testing outcomes, refine your code to fix bugs or enhance functionalities.
-   - Optimize UI components for better user experience.
-
-## **Additional Recommendations**
-
-1. **Version Control:**
-   
-   - Initialize a Git repository in your project directory.
-   - Regularly commit changes with meaningful messages to track progress and facilitate collaboration.
-
-2. **Documentation:**
-   
-   - Update `README.md` with detailed instructions on setting up, running, and using your application.
-   - Consider adding Javadoc comments to your classes and methods for better code documentation.
-
-3. **Modular Development:**
-   
-   - Develop and test one component at a time (e.g., implement and test Task Management before moving to Category Management).
-   - This approach helps in isolating and fixing issues more effectively.
-
-4. **User Feedback:**
-   
-   - If possible, have others test your application to gather feedback on usability and functionality.
-   - Incorporate valuable feedback to enhance your application's quality.
-
-5. **Advanced Features (Optional):**
-   
-   - Implement additional functionalities like sorting tasks by priority or deadline.
-   - Add notifications for upcoming deadlines based on reminders.
-   - Enhance the search functionality with advanced filtering options.
-
-## **Conclusion**
-
-By following this structured approach, you'll methodically build each component of your task management system, ensuring that all aspects—from data modeling and storage to user interface design and interaction—are cohesively integrated. Remember to test each part thoroughly before moving on to the next to maintain a stable and reliable application.
-
-Feel free to reach out if you encounter any challenges or need further assistance with specific components as you progress through your project. Happy coding!
+**Next Steps:**
+- Begin implementing the management functionalities (Task, Category, Priority, Reminder).
+- Enhance the user interface with styling and responsive design.
+- Add search and filtering capabilities to improve task navigation.
+- Implement data validation and robust error handling for a seamless user experience.
