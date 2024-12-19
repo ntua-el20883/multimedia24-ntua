@@ -5,6 +5,8 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.DateCell;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -65,6 +67,18 @@ public class TaskManagementController {
         DatePicker deadlinePicker = new DatePicker();
         ComboBox<String> statusComboBox = new ComboBox<>();
 
+        // Disable past dates in DatePicker
+        deadlinePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;"); // Optional: Highlight disabled dates
+                }
+            }
+        });
+
         // Populate Category and Priority ComboBoxes
         List<Category> categories = dataStore.getAllCategories();
         for (Category cat : categories) {
@@ -122,6 +136,12 @@ public class TaskManagementController {
                 return;
             }
 
+            // Additional Date Validation
+            if (deadline.isBefore(LocalDate.now())) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Deadline", "Deadline cannot be in the past.");
+                return;
+            }
+
             // Create and add new task
             Task newTask = new Task(title, description, category, priority, deadline, status);
             dataStore.getAllTasks().add(newTask);
@@ -174,6 +194,18 @@ public class TaskManagementController {
         ComboBox<String> priorityComboBox = new ComboBox<>();
         DatePicker deadlinePicker = new DatePicker(selectedTask.getDeadline());
         ComboBox<String> statusComboBox = new ComboBox<>();
+
+        // Disable past dates in DatePicker
+        deadlinePicker.setDayCellFactory(picker -> new DateCell() {
+            @Override
+            public void updateItem(LocalDate date, boolean empty) {
+                super.updateItem(date, empty);
+                if (date.isBefore(LocalDate.now())) {
+                    setDisable(true);
+                    setStyle("-fx-background-color: #ffc0cb;"); // Optional: Highlight disabled dates
+                }
+            }
+        });
 
         // Populate Category and Priority ComboBoxes
         List<Category> categories = dataStore.getAllCategories();
@@ -235,6 +267,12 @@ public class TaskManagementController {
                 return;
             }
 
+            // Additional Date Validation
+            if (deadline.isBefore(LocalDate.now())) {
+                showAlert(Alert.AlertType.ERROR, "Invalid Deadline", "Deadline cannot be in the past.");
+                return;
+            }
+
             // Update task attributes
             selectedTask.setTitle(title);
             selectedTask.setDescription(description);
@@ -259,6 +297,32 @@ public class TaskManagementController {
         Scene scene = new Scene(grid, 500, 450); // Increased dialog size
         dialog.setScene(scene);
         dialog.showAndWait();
+    }
+
+    // Method to delete selected task
+    private void deleteSelectedTask() {
+        Task selectedTask = taskManagementView.getTaskListView().getSelectionModel().getSelectedItem();
+        if (selectedTask == null) {
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a task to delete.");
+            return;
+        }
+
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmation.setTitle("Delete Confirmation");
+        confirmation.setHeaderText(null);
+        confirmation.setContentText("Are you sure you want to delete the selected task?");
+
+        Optional<ButtonType> result = confirmation.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            dataStore.getAllTasks().remove(selectedTask);
+            dataStore.saveAllData();
+
+            // Refresh task list
+            taskManagementView.refreshTaskList(dataStore.getAllTasks());
+
+            // Update main statistics
+            MainController.getInstance().updateStatistics();
+        }
     }
 
     // Method to view selected task details
@@ -320,39 +384,13 @@ public class TaskManagementController {
         Button closeBtn = new Button("Close");
         closeBtn.setOnAction(e -> dialog.close());
         HBox buttonBox = new HBox(closeBtn);
-        buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(20, 0, 0, 0)); // Increased top padding
+        buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align button to the right
         grid.add(buttonBox, 1, 6);
 
         Scene scene = new Scene(grid, 500, 500); // Increased dialog size
         dialog.setScene(scene);
         dialog.showAndWait();
-    }
-
-    // Method to delete selected task
-    private void deleteSelectedTask() {
-        Task selectedTask = taskManagementView.getTaskListView().getSelectionModel().getSelectedItem();
-        if (selectedTask == null) {
-            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a task to delete.");
-            return;
-        }
-
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Delete Confirmation");
-        confirmation.setHeaderText(null);
-        confirmation.setContentText("Are you sure you want to delete the selected task?");
-
-        Optional<ButtonType> result = confirmation.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            dataStore.getAllTasks().remove(selectedTask);
-            dataStore.saveAllData();
-
-            // Refresh task list
-            taskManagementView.refreshTaskList(dataStore.getAllTasks());
-
-            // Update main statistics
-            MainController.getInstance().updateStatistics();
-        }
     }
 
     // Helper method to create a GridPane for forms
