@@ -22,12 +22,12 @@ public class MainView {
 
     // Management Buttons
     private Button taskManagementBtn;
-    private Button categoryManagementBtn;
+    private Button categoryManagementBtn; // New Button
     private Button priorityManagementBtn;
     private Button reminderManagementBtn;
 
     public MainView(Stage stage) {
-        this.stage = stage;
+        this.stage = stage; // Assign the passed Stage to the class variable
         root = new BorderPane();
 
         // Create the header
@@ -70,25 +70,25 @@ public class MainView {
 
         // Bottom Half Cells (5-8) with Buttons
         taskManagementBtn = new Button("Task Management");
-        categoryManagementBtn = new Button("Category Management");
+        categoryManagementBtn = new Button("Category Management"); // Initialize new button
         priorityManagementBtn = new Button("Priority Management");
         reminderManagementBtn = new Button("Reminder Management");
 
         // Set Button Sizes
         taskManagementBtn.setPrefSize(150, 50);
-        categoryManagementBtn.setPrefSize(150, 50);
+        categoryManagementBtn.setPrefSize(150, 50); // Set size
         priorityManagementBtn.setPrefSize(150, 50);
         reminderManagementBtn.setPrefSize(150, 50);
 
         // Create Cells with Buttons
         VBox cell5 = createButtonCell(taskManagementBtn);
-        VBox cell6 = createButtonCell(categoryManagementBtn);
+        VBox cell6 = createButtonCell(categoryManagementBtn); // Add new button
         VBox cell7 = createButtonCell(priorityManagementBtn);
         VBox cell8 = createButtonCell(reminderManagementBtn);
 
         // Add Cells to GridPane (Bottom Row)
         centralGrid.add(cell5, 0, 1);
-        centralGrid.add(cell6, 1, 1);
+        centralGrid.add(cell6, 1, 1); // Add new button to grid
         centralGrid.add(cell7, 2, 1);
         centralGrid.add(cell8, 3, 1);
 
@@ -160,7 +160,8 @@ public class MainView {
         return reminderManagementBtn;
     }
 
+    // **New Getter Method for Stage**
     public Stage getStage() {
         return stage;
-    }    
+    }
 }

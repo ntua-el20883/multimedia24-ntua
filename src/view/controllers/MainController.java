@@ -6,6 +6,9 @@ import model.Task;
 import storage.DataStore;
 import view.MainView;
 import view.TaskManagementView;
+import view.CategoryManagementView;
+import view.controllers.TaskManagementController;
+import view.controllers.CategoryManagementController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,7 +35,7 @@ public class MainController {
         this.mainView = mainView;
         // Assign button actions
         this.mainView.getTaskManagementBtn().setOnAction(e -> openTaskManagementWindow());
-        this.mainView.getCategoryManagementBtn().setOnAction(e -> handleCategoryManagement());
+        this.mainView.getCategoryManagementBtn().setOnAction(e -> openCategoryManagementWindow()); // New action
         this.mainView.getPriorityManagementBtn().setOnAction(e -> handlePriorityManagement());
         this.mainView.getReminderManagementBtn().setOnAction(e -> handleReminderManagement());
     }
@@ -42,6 +45,13 @@ public class MainController {
         TaskManagementView taskView = new TaskManagementView(mainView.getStage(), dataStore.getAllTasks());
         TaskManagementController taskController = new TaskManagementController(taskView);
         taskView.getStage().showAndWait();
+    }
+
+    // Method to open Category Management Window
+    private void openCategoryManagementWindow() {
+        CategoryManagementView categoryView = new CategoryManagementView(mainView.getStage(), dataStore.getAllCategories());
+        CategoryManagementController categoryController = new CategoryManagementController(categoryView);
+        categoryView.getStage().showAndWait();
     }
 
     // Getter for singleton instance
@@ -75,26 +85,6 @@ public class MainController {
                 .filter(task -> dataStore.isTaskDueInDays(task, 7))
                 .count();
         mainView.getUpcomingTasksLabel().setText("Tasks Due in 7 Days: " + upcoming);
-    }
-
-    // Handle Task Management Button
-    public void handleTaskManagement() {
-        // Placeholder for Task Management window
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Task Management");
-        alert.setHeaderText(null);
-        alert.setContentText("Task Management feature is not yet implemented.");
-        alert.showAndWait();
-    }
-
-    // Handle Category Management Button
-    public void handleCategoryManagement() {
-        // Placeholder for Category Management window
-        Alert alert = new Alert(AlertType.INFORMATION);
-        alert.setTitle("Category Management");
-        alert.setHeaderText(null);
-        alert.setContentText("Category Management feature is not yet implemented.");
-        alert.showAndWait();
     }
 
     // Handle Priority Management Button

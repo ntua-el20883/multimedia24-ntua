@@ -25,6 +25,11 @@ public class DataStore {
 
     private JSONHandler jsonHandler;
 
+    private static final String TASKS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/tasks.json";
+    private static final String CATEGORIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/categories.json";
+    private static final String PRIORITIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/priorities.json";
+    private static final String REMINDERS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/reminders.json";
+
     private DataStore() {
         tasks = new ArrayList<>();
         categories = new ArrayList<>();
@@ -35,7 +40,7 @@ public class DataStore {
 
     // Singleton pattern to ensure only one instance
     public static DataStore getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new DataStore();
         }
         return instance;
@@ -43,11 +48,11 @@ public class DataStore {
 
     // Load all data from JSON files
     public void loadAllData() {
-        tasks = jsonHandler.loadTasks("C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/tasks.json");
-        categories = jsonHandler.loadCategories("C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/categories.json");
-        priorities = jsonHandler.loadPriorities("C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/priorities.json");
-        reminders = jsonHandler.loadReminders("C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/reminders.json");
-    }    
+        tasks = jsonHandler.loadTasks(TASKS_FILE);
+        categories = jsonHandler.loadCategories(CATEGORIES_FILE);
+        priorities = jsonHandler.loadPriorities(PRIORITIES_FILE);
+        reminders = jsonHandler.loadReminders(REMINDERS_FILE);
+    }
 
     // Save all data to JSON files
     public void saveAllData() {
@@ -82,5 +87,34 @@ public class DataStore {
         return daysBetween >= 0 && daysBetween <= days;
     }
 
-    // Additional CRUD operations can be added here
+    // Additional Methods for Category Management
+    public void addCategory(Category category) {
+        categories.add(category);
+        saveCategories();
+    }
+
+    public void editCategory(Category oldCategory, String newName) {
+        oldCategory.setName(newName);
+        saveCategories();
+    }
+
+    public void deleteCategory(Category category) {
+        categories.remove(category);
+        saveCategories();
+    }
+
+    // Method to check if a category is in use
+    public boolean isCategoryInUse(Category category) {
+        for (Task task : tasks) {
+            if (task.getCategory().equalsIgnoreCase(category.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Helper method to save categories (used by Category Management)
+    private void saveCategories() {
+        jsonHandler.saveCategories("medialab/categories.json", categories);
+    }
 }
