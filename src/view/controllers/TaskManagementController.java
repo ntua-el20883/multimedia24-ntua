@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.DateCell;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -126,12 +125,26 @@ public class TaskManagementController {
             String title = titleField.getText().trim();
             String description = descriptionArea.getText().trim();
             String category = categoryComboBox.getValue();
+
+            // If the user doesn't select a category, set category to "Default"
+            if (category == null || category.isEmpty()) {
+                category = "Default";
+
+                // Ensure "Default" category exists in DataStore
+                boolean hasDefaultCategory = dataStore.getAllCategories().stream()
+                        .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
+                if (!hasDefaultCategory) {
+                    dataStore.addCategory(new Category("Default"));
+                }
+            }
+
             String priority = priorityComboBox.getValue();
             LocalDate deadline = deadlinePicker.getValue();
             String status = statusComboBox.getValue();
 
             // Validate Inputs
-            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null || status == null) {
+            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null
+                    || status == null) {
                 showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
                 return;
             }
@@ -262,7 +275,8 @@ public class TaskManagementController {
             String status = statusComboBox.getValue();
 
             // Validate Inputs
-            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null || status == null) {
+            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null
+                    || status == null) {
                 showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
                 return;
             }

@@ -68,7 +68,7 @@ Description of the Entities and Attributes. Inside the [] is the format or manda
 - Status ["Open", "In Progress", "Postponed", "Completed", "Delayed"]
 
 ### Points to consider
-- A new task has default status "Open".
+- A new task has default Status "Open".
 - If the current date is past the deadline, the status should automatically be updated to "Delayed".
 - The user can create a new Task, modify an existing one (all attributes except Status) and delete one (in which case its corresponding Reminders (if they exist) should also be deleted).
 

@@ -6,7 +6,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
@@ -105,6 +104,12 @@ public class CategoryManagementController {
             return;
         }
 
+        // Prevent "Default" Category edition
+        if (selectedCategory.getName().equalsIgnoreCase("Default")) {
+            showAlert(Alert.AlertType.ERROR, "Edit Not Allowed", "The 'Default' category cannot be renamed.");
+            return;
+        }
+
         Stage dialog = new Stage();
         dialog.setTitle("Edit Category");
         dialog.initModality(Modality.APPLICATION_MODAL);
@@ -169,22 +174,20 @@ public class CategoryManagementController {
     private void deleteSelectedCategory() {
         Category selectedCategory = categoryView.getCategoryListView().getSelectionModel().getSelectedItem();
         if (selectedCategory == null) {
-            showAlert(AlertType.WARNING, "No Selection", "Please select a category to delete.");
+            showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a category to delete.");
             return;
         }
 
-        // Check if category is in use
-        boolean inUse = dataStore.isCategoryInUse(selectedCategory);
-        if (inUse) {
-            showAlert(AlertType.ERROR, "Cannot Delete", "This category is associated with existing tasks. Please reassign or delete those tasks first.");
+        if (selectedCategory.getName().equalsIgnoreCase("Default")) {
+            showAlert(Alert.AlertType.ERROR, "Delete Not Allowed", "The 'Default' category cannot be deleted.");
             return;
         }
 
         // Confirmation Dialog
-        Alert confirmation = new Alert(AlertType.CONFIRMATION);
+        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Delete Confirmation");
         confirmation.setHeaderText(null);
-        confirmation.setContentText("Are you sure you want to delete the selected category?");
+        confirmation.setContentText("Are you sure you want to delete the selected category and its associated tasks?");
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {

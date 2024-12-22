@@ -34,10 +34,10 @@
   "deadline" : "2025-02-27",
   "status" : "Postponed"
 }, {
-  "title" : "test",
-  "description" : "testing",
-  "category" : "Work",
+  "title" : "testDefCat",
+  "description" : "testing the def cat",
+  "category" : "Default",
   "priority" : "High",
-  "deadline" : "2025-01-03",
-  "status" : "Postponed"
+  "deadline" : "2025-01-01",
+  "status" : "In Progress"
 } ]
