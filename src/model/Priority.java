@@ -2,14 +2,12 @@ package model;
 
 public class Priority {
     private String name;
-    private int value;
 
     // Default constructor for Jackson
     public Priority() {}
 
-    public Priority(String name, int value) {
+    public Priority(String name) {
         this.name = name;
-        this.value = value;
     }
 
     public String getName() {
@@ -20,11 +18,8 @@ public class Priority {
         this.name = name;
     }
 
-    public int getValue() {
-        return value;
-    }
-
-    public void setValue(int value) {
-        this.value = value;
+    @Override
+    public String toString() {
+        return name;
     }
 }

@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Type; // Added import
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
@@ -50,25 +50,14 @@ public class DataStore {
     }
 
     // Load all data from JSON files
-    // Load all data from JSON files
     public void loadAllData() {
         tasks = jsonHandler.loadTasks(TASKS_FILE);
         categories = jsonHandler.loadCategories(CATEGORIES_FILE);
         priorities = jsonHandler.loadPriorities(PRIORITIES_FILE);
         reminders = jsonHandler.loadReminders(REMINDERS_FILE);
 
-        // Ensure the "Default" category exists
         ensureDefaultCategory();
-    }
-
-    // Ensure the "Default" category exists in the list
-    private void ensureDefaultCategory() {
-        boolean hasDefaultCategory = categories.stream()
-                .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
-        if (!hasDefaultCategory) {
-            categories.add(new Category("Default"));
-            saveCategories();
-        }
+        ensureDefaultPriority();
     }
 
     // Save all data to JSON files
@@ -96,12 +85,45 @@ public class DataStore {
         return reminders;
     }
 
+    // ===== TASK METHODS =====
+
     // Check if a task is due within a certain number of days
     public boolean isTaskDueInDays(Task task, int days) {
         LocalDate today = LocalDate.now();
         LocalDate deadline = task.getDeadline();
         long daysBetween = ChronoUnit.DAYS.between(today, deadline);
         return daysBetween >= 0 && daysBetween <= days;
+    }
+
+    // Helper method to save tasks
+    private void saveTasks() {
+        jsonHandler.saveTasks(TASKS_FILE, tasks);
+    }
+
+    // ===== CATEGORY METHODS =====
+
+    // Load Categories
+    private void loadCategories() {
+        try (Reader reader = new FileReader(CATEGORIES_FILE)) {
+            List<Category> loadedCategories = jsonHandler.loadCategories(CATEGORIES_FILE);
+            if (loadedCategories != null) {
+                categories = loadedCategories;
+            }
+        } catch (IOException e) {
+            categories = new ArrayList<>(); // Initialize empty if file is missing
+        }
+
+        ensureDefaultCategory();
+    }
+
+    // Ensure the "Default" category exists in the list
+    private void ensureDefaultCategory() {
+        boolean hasDefaultCategory = categories.stream()
+                .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
+        if (!hasDefaultCategory) {
+            categories.add(new Category("Default"));
+            saveCategories();
+        }
     }
 
     // Additional Methods for Category Management
@@ -111,30 +133,6 @@ public class DataStore {
         }
         categories.add(category);
         saveCategories();
-    }
-
-    // Ensure the "Default" category exists in loadCategories
-    private void loadCategories() {
-        try (Reader reader = new FileReader(CATEGORIES_FILE)) {
-            Type categoryListType = new TypeReference<List<Category>>() {
-            }.getType();
-            List<Category> loadedCategories = jsonHandler.loadCategories(CATEGORIES_FILE);
-            if (loadedCategories != null) {
-
-                categories = loadedCategories;
-            }
-        } catch (IOException e) {
-            // Initialize with default categories if file is missing
-            categories = new ArrayList<>();
-        }
-
-        // Ensure the "Default" category exists
-        boolean hasDefaultCategory = categories.stream()
-                .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
-        if (!hasDefaultCategory) {
-            categories.add(new Category("Default"));
-            saveCategories();
-        }
     }
 
     public void editCategory(Category oldCategory, String newName) {
@@ -192,8 +190,71 @@ public class DataStore {
         jsonHandler.saveCategories(CATEGORIES_FILE, categories);
     }
 
-    // Helper method to save tasks
-    private void saveTasks() {
-        jsonHandler.saveTasks(TASKS_FILE, tasks);
+    // ===== PRIORITY METHODS =====
+
+    // Add a new priority
+    public void addPriority(Priority priority) {
+        boolean exists = priorities.stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase(priority.getName()));
+        if (exists) {
+            throw new IllegalArgumentException("A priority with the same name already exists.");
+        }
+
+        priorities.add(priority);
+        savePriorities();
+    }
+
+    // Edit an existing priority
+    public void editPriority(Priority oldPriority, String newName) {
+        if (oldPriority.getName().equalsIgnoreCase("Default")) {
+            throw new IllegalArgumentException("The 'Default' priority cannot be edited.");
+        }
+
+        boolean exists = priorities.stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase(newName) && p != oldPriority);
+        if (exists) {
+            throw new IllegalArgumentException("A priority with the same name already exists.");
+        }
+
+        tasks.forEach(task -> {
+            if (task.getPriority().equalsIgnoreCase(oldPriority.getName())) {
+                task.setPriority(newName);
+            }
+        });
+
+        oldPriority.setName(newName);
+        savePriorities();
+        saveTasks(); // Save updated tasks
+    }
+
+    // Delete a priority
+    public void deletePriority(Priority priority) {
+        if (priority.getName().equalsIgnoreCase("Default")) {
+            throw new IllegalArgumentException("The 'Default' priority cannot be deleted.");
+        }
+
+        // Remove tasks associated with the deleted priority
+        tasks.removeIf(task -> task.getPriority().equalsIgnoreCase(priority.getName()));
+
+        // Remove the priority
+        priorities.remove(priority);
+
+        savePriorities();
+        saveTasks(); // Save updated tasks
+    }
+
+    // Ensure the "Default" priority exists in the list
+    private void ensureDefaultPriority() {
+        boolean hasDefaultPriority = priorities.stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase("Default"));
+        if (!hasDefaultPriority) {
+            priorities.add(new Priority("Default"));
+            savePriorities();
+        }
+    }
+
+    // Save priorities to JSON
+    private void savePriorities() {
+        jsonHandler.savePriorities(PRIORITIES_FILE, priorities);
     }
 }

@@ -5,6 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import storage.DataStore;
+import view.controllers.PriorityManagementController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
@@ -70,7 +72,7 @@ public class MainView {
 
         // Bottom Half Cells (5-8) with Buttons
         taskManagementBtn = new Button("Task Management");
-        categoryManagementBtn = new Button("Category Management"); // Initialize new button
+        categoryManagementBtn = new Button("Category Management");
         priorityManagementBtn = new Button("Priority Management");
         reminderManagementBtn = new Button("Reminder Management");
 

@@ -18,22 +18,19 @@
 - [x] If a Category is renamed, its associated Tasks must have their "Category" attribute updated.
 
 ### ***Priority***
-- Priority has the attributes: "Name", "Value".
-- "Name" can take the values: "Default", (...).
-- "Value" can take the values: "0", (...).
-- If the "Default" Priority does not exist at the start of the app, the "Default" Priority must be automatically created.
-- If the user doesn't specify a Task's Priority, the Task's Priority must be set to "Default".
-- User can't edit/delete the "Default" Priority.
-- User can't create a new Priority with with the same "Name" or "Value".
-- The "Value" of a Priority should be an integer number greater than 0.
-- A Priority with a bigger "Value" is considered more important than a Priority with a smaller "Value".
-- If a Priority is deleted, its associated Tasks must also deleted.
-- If a Priority is renamed, its associated Tasks must have their "Priority" attribute updated. 
+- [x] Priority has the attributes: "Name".
+- [x] "Name" can take the values: "Default", (...).
+- [x] If the "Default" Priority does not exist at the start of the app, the "Default" Priority must be automatically created.
+- [x] If the user doesn't specify a Task's Priority, the Task's Priority must be set to "Default".
+- [x] User can't edit/delete the "Default" Priority.
+- [x] User can't create a new Priority with with the same "Name" ("High" and "high" are treated as equals).
+- [x] If a Priority is deleted, its associated Tasks must also deleted.
+- [x] If a Priority is renamed, its associated Tasks must have their "Priority" attribute updated. 
 
 ### ***Deadline***
-- Deadline has the attributes: "Date".
-- The user must specify a Task's Deadline.
-- "Date" must be a future date.
+- [x] Deadline has the attributes: "Date".
+- [x] The user must specify a Task's Deadline.
+- [x] "Date" must be a future date.
 
 ### ***Status***
 - Status has the attributes: "Name".

@@ -5,10 +5,9 @@ import javafx.scene.control.Alert.AlertType;
 import model.Task;
 import storage.DataStore;
 import view.MainView;
+import view.PriorityManagementView;
 import view.TaskManagementView;
 import view.CategoryManagementView;
-import view.controllers.TaskManagementController;
-import view.controllers.CategoryManagementController;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,8 +34,8 @@ public class MainController {
         this.mainView = mainView;
         // Assign button actions
         this.mainView.getTaskManagementBtn().setOnAction(e -> openTaskManagementWindow());
-        this.mainView.getCategoryManagementBtn().setOnAction(e -> openCategoryManagementWindow()); // New action
-        this.mainView.getPriorityManagementBtn().setOnAction(e -> handlePriorityManagement());
+        this.mainView.getCategoryManagementBtn().setOnAction(e -> openCategoryManagementWindow());
+        this.mainView.getPriorityManagementBtn().setOnAction(e -> openPriorityManagementWindow());
         this.mainView.getReminderManagementBtn().setOnAction(e -> handleReminderManagement());
     }
 
@@ -49,9 +48,18 @@ public class MainController {
 
     // Method to open Category Management Window
     private void openCategoryManagementWindow() {
-        CategoryManagementView categoryView = new CategoryManagementView(mainView.getStage(), dataStore.getAllCategories());
+        CategoryManagementView categoryView = new CategoryManagementView(mainView.getStage(),
+                dataStore.getAllCategories());
         CategoryManagementController categoryController = new CategoryManagementController(categoryView);
         categoryView.getStage().showAndWait();
+    }
+
+    // Method to open Priority Management Window
+    private void openPriorityManagementWindow() {
+        PriorityManagementView priorityView = new PriorityManagementView(mainView.getStage(),
+                dataStore.getAllPriorities());
+        PriorityManagementController priorityController = new PriorityManagementController(priorityView);
+        priorityView.getStage().showAndWait();
     }
 
     // Getter for singleton instance

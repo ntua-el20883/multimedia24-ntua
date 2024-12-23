@@ -125,6 +125,15 @@ public class TaskManagementController {
             String title = titleField.getText().trim();
             String description = descriptionArea.getText().trim();
             String category = categoryComboBox.getValue();
+            String priority = priorityComboBox.getValue();
+            LocalDate deadline = deadlinePicker.getValue();
+            String status = statusComboBox.getValue();
+
+            // Validate Inputs
+            if (title.isEmpty() || description.isEmpty() || deadline == null || status == null) {
+                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
+                return;
+            }
 
             // If the user doesn't select a category, set category to "Default"
             if (category == null || category.isEmpty()) {
@@ -138,15 +147,16 @@ public class TaskManagementController {
                 }
             }
 
-            String priority = priorityComboBox.getValue();
-            LocalDate deadline = deadlinePicker.getValue();
-            String status = statusComboBox.getValue();
+            // If the user doesn't select a priority, set priority to "Default"
+            if (priority == null || priority.isEmpty()) {
+                priority = "Default";
 
-            // Validate Inputs
-            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null
-                    || status == null) {
-                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
-                return;
+                // Ensure "Default" category exists in DataStore
+                boolean hasDefaultPriority = dataStore.getAllPriorities().stream()
+                        .anyMatch(pri -> pri.getName().equalsIgnoreCase("Default"));
+                if (!hasDefaultPriority) {
+                    dataStore.addPriority(new Priority("Default"));
+                }
             }
 
             // Additional Date Validation
@@ -171,7 +181,7 @@ public class TaskManagementController {
 
         cancelBtn.setOnAction(e -> dialog.close());
 
-        Scene scene = new Scene(grid, 500, 450); // Increased dialog size
+        Scene scene = new Scene(grid, 500, 450);
         dialog.setScene(scene);
         dialog.showAndWait();
     }
@@ -287,6 +297,16 @@ public class TaskManagementController {
                 return;
             }
 
+            // Assign default priority if cleared
+            if (priority == null || priority.isEmpty()) {
+                priority = "Default";
+            }
+
+            // Assign default category if cleared
+            if (category == null || category.isEmpty()) {
+                category = "Default";
+            }
+
             // Update task attributes
             selectedTask.setTitle(title);
             selectedTask.setDescription(description);
@@ -308,7 +328,7 @@ public class TaskManagementController {
 
         cancelBtn.setOnAction(e -> dialog.close());
 
-        Scene scene = new Scene(grid, 500, 450); // Increased dialog size
+        Scene scene = new Scene(grid, 500, 450);
         dialog.setScene(scene);
         dialog.showAndWait();
     }

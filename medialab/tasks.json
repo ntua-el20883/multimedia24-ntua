@@ -33,11 +33,4 @@
   "priority" : "Low",
   "deadline" : "2025-02-27",
   "status" : "Postponed"
-}, {
-  "title" : "testDefCat",
-  "description" : "testing the def cat",
-  "category" : "Default",
-  "priority" : "High",
-  "deadline" : "2025-01-01",
-  "status" : "In Progress"
 } ]

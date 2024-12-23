@@ -1,10 +1,9 @@
 [ {
-  "name" : "High",
-  "value" : 3
+  "name" : "High"
 }, {
-  "name" : "Medium",
-  "value" : 2
+  "name" : "Medium"
 }, {
-  "name" : "Low",
-  "value" : 1
+  "name" : "Low"
+}, {
+  "name" : "Default"
 } ]
