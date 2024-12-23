@@ -7,9 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Category;
-import java.util.List; // Added import
+import java.util.List;
 
-public class CategoryManagementView {
+public class CategoryView {
 
     private Stage stage;
     private BorderPane root;
@@ -21,7 +21,7 @@ public class CategoryManagementView {
     private Button editCategoryBtn;
     private Button deleteCategoryBtn;
 
-    public CategoryManagementView(Stage owner, List<Category> categories) {
+    public CategoryView(Stage owner, List<Category> categories) {
         stage = new Stage();
         stage.setTitle("Category Management");
         stage.initOwner(owner);

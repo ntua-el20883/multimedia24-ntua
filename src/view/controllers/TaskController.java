@@ -15,18 +15,18 @@ import model.Category;
 import model.Priority;
 import model.Task;
 import storage.DataStore;
-import view.TaskManagementView;
+import view.TaskView;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-public class TaskManagementController {
+public class TaskController {
 
-    private TaskManagementView taskManagementView;
+    private TaskView taskManagementView;
     private DataStore dataStore;
 
-    public TaskManagementController(TaskManagementView view) {
+    public TaskController(TaskView view) {
         this.taskManagementView = view;
         this.dataStore = DataStore.getInstance();
         initialize();

@@ -5,9 +5,9 @@ import javafx.scene.control.Alert.AlertType;
 import model.Task;
 import storage.DataStore;
 import view.MainView;
-import view.PriorityManagementView;
-import view.TaskManagementView;
-import view.CategoryManagementView;
+import view.PriorityView;
+import view.TaskView;
+import view.CategoryView;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -41,24 +41,24 @@ public class MainController {
 
     // Method to open Task Management Window
     private void openTaskManagementWindow() {
-        TaskManagementView taskView = new TaskManagementView(mainView.getStage(), dataStore.getAllTasks());
-        TaskManagementController taskController = new TaskManagementController(taskView);
+        TaskView taskView = new TaskView(mainView.getStage(), dataStore.getAllTasks());
+        TaskController taskController = new TaskController(taskView);
         taskView.getStage().showAndWait();
     }
 
     // Method to open Category Management Window
     private void openCategoryManagementWindow() {
-        CategoryManagementView categoryView = new CategoryManagementView(mainView.getStage(),
+        CategoryView categoryView = new CategoryView(mainView.getStage(),
                 dataStore.getAllCategories());
-        CategoryManagementController categoryController = new CategoryManagementController(categoryView);
+        CategoryController categoryController = new CategoryController(categoryView);
         categoryView.getStage().showAndWait();
     }
 
     // Method to open Priority Management Window
     private void openPriorityManagementWindow() {
-        PriorityManagementView priorityView = new PriorityManagementView(mainView.getStage(),
+        PriorityView priorityView = new PriorityView(mainView.getStage(),
                 dataStore.getAllPriorities());
-        PriorityManagementController priorityController = new PriorityManagementController(priorityView);
+        PriorityController priorityController = new PriorityController(priorityView);
         priorityView.getStage().showAndWait();
     }
 

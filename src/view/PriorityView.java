@@ -7,9 +7,9 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import model.Priority;
-import java.util.List; // Added import
+import java.util.List;
 
-public class PriorityManagementView {
+public class PriorityView {
 
     private Stage stage;
     private BorderPane root;
@@ -21,7 +21,7 @@ public class PriorityManagementView {
     private Button editPriorityBtn;
     private Button deletePriorityBtn;
 
-    public PriorityManagementView(Stage owner, List<Priority> priorities) {
+    public PriorityView(Stage owner, List<Priority> priorities) {
         stage = new Stage();
         stage.setTitle("Priority Management");
         stage.initOwner(owner);

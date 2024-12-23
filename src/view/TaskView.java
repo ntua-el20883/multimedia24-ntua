@@ -10,7 +10,7 @@ import model.Task;
 
 import java.util.List;
 
-public class TaskManagementView {
+public class TaskView {
 
     private Stage stage;
     private BorderPane root;
@@ -23,7 +23,7 @@ public class TaskManagementView {
     private Button deleteTaskBtn;
     private Button viewTaskBtn;
 
-    public TaskManagementView(Stage owner, List<Task> tasks) {
+    public TaskView(Stage owner, List<Task> tasks) {
         stage = new Stage();
         stage.setTitle("Task Management");
         stage.initOwner(owner);
