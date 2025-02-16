@@ -7,8 +7,8 @@ public class Task {
 
     private String title;
     private String description;
-    private String category; // Reference by name
-    private String priority; // Reference by name
+    private String category;
+    private String priority;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate deadline;
     private String status;

@@ -6,7 +6,7 @@ import javafx.scene.layout.*;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import storage.DataStore;
-import view.controllers.PriorityController;
+import controllers.PriorityController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 

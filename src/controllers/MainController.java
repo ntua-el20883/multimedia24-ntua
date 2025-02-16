@@ -1,11 +1,15 @@
-package view.controllers;
+package controllers;
 
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import model.Task;
+import model.Category;
+import model.Priority;
 import storage.DataStore;
 import view.MainView;
 import view.PriorityView;
+import view.ReminderView;
 import view.TaskView;
 import view.CategoryView;
 
@@ -27,6 +31,8 @@ public class MainController {
     // Initialize data (load from JSON)
     public void initializeData() {
         dataStore.loadAllData();
+        updateTaskStatuses(); // Ensure delayed tasks are updated
+        checkForDelayedTasks(); // Show warning if needed
     }
 
     // Set the main view
@@ -36,12 +42,32 @@ public class MainController {
         this.mainView.getTaskManagementBtn().setOnAction(e -> openTaskManagementWindow());
         this.mainView.getCategoryManagementBtn().setOnAction(e -> openCategoryManagementWindow());
         this.mainView.getPriorityManagementBtn().setOnAction(e -> openPriorityManagementWindow());
-        this.mainView.getReminderManagementBtn().setOnAction(e -> handleReminderManagement());
+        this.mainView.getReminderManagementBtn().setOnAction(e -> openReminderManagementWindow());
+    }
+
+    private void checkForDelayedTasks() {
+        long delayedTasks = dataStore.getAllTasks().stream()
+                .filter(task -> task.getStatus().equalsIgnoreCase("Delayed"))
+                .count();
+
+        if (delayedTasks > 0) {
+            Platform.runLater(() -> {
+                Alert alert = new Alert(AlertType.WARNING);
+                alert.setTitle("Overdue Tasks");
+                alert.setHeaderText("Attention: Delayed Tasks Found");
+                alert.setContentText("There are " + delayedTasks + " overdue tasks that require your attention.");
+                alert.showAndWait();
+            });
+        }
     }
 
     // Method to open Task Management Window
     private void openTaskManagementWindow() {
-        TaskView taskView = new TaskView(mainView.getStage(), dataStore.getAllTasks());
+        TaskView taskView = new TaskView(
+                mainView.getStage(),
+                dataStore.getAllTasks(),
+                dataStore.getAllCategories().stream().map(Category::getName).toList(),
+                dataStore.getAllPriorities().stream().map(Priority::getName).toList());
         TaskController taskController = new TaskController(taskView);
         taskView.getStage().showAndWait();
     }
@@ -62,6 +88,14 @@ public class MainController {
         priorityView.getStage().showAndWait();
     }
 
+    // Method to open Reminder Management Window
+    private void openReminderManagementWindow() {
+        ReminderView reminderView = new ReminderView(mainView.getStage(),
+                dataStore.getAllReminders());
+        ReminderController reminderController = new ReminderController(reminderView);
+        reminderView.getStage().showAndWait();
+    }
+
     // Getter for singleton instance
     public static MainController getInstance() {
         return instance;
@@ -71,31 +105,31 @@ public class MainController {
     public void updateStatistics() {
         if (mainView == null)
             return;
+        Platform.runLater(() -> {
+            List<Task> tasks = dataStore.getAllTasks();
+            mainView.getTotalTasksLabel().setText("Total Tasks: " + tasks.size());
 
-        List<Task> tasks = dataStore.getAllTasks();
+            long completed = tasks.stream()
+                    .filter(task -> task.getStatus().equalsIgnoreCase("Completed"))
+                    .count();
+            mainView.getCompletedTasksLabel().setText("Completed Tasks: " + completed);
 
-        mainView.getTotalTasksLabel().setText("Total Tasks: " + tasks.size());
+            long delayed = tasks.stream()
+                    .filter(task -> task.getStatus().equalsIgnoreCase("Delayed"))
+                    .count();
+            mainView.getDelayedTasksLabel().setText("Delayed Tasks: " + delayed);
 
-        long completed = tasks.stream()
-                .filter(task -> task.getStatus().equalsIgnoreCase("Completed"))
-                .count();
-        mainView.getCompletedTasksLabel().setText("Completed Tasks: " + completed);
-
-        long delayed = tasks.stream()
-                .filter(task -> task.getStatus().equalsIgnoreCase("Delayed"))
-                .count();
-        mainView.getDelayedTasksLabel().setText("Delayed Tasks: " + delayed);
-
-        long upcoming = tasks.stream()
-                .filter(task -> task.getStatus().equalsIgnoreCase("Open") ||
-                        task.getStatus().equalsIgnoreCase("In Progress") ||
-                        task.getStatus().equalsIgnoreCase("Postponed"))
-                .filter(task -> dataStore.isTaskDueInDays(task, 7))
-                .count();
-        mainView.getUpcomingTasksLabel().setText("Tasks Due in 7 Days: " + upcoming);
+            long upcoming = tasks.stream()
+                    .filter(task -> task.getStatus().equalsIgnoreCase("Open") ||
+                            task.getStatus().equalsIgnoreCase("In Progress") ||
+                            task.getStatus().equalsIgnoreCase("Postponed"))
+                    .filter(task -> dataStore.isTaskDueInDays(task, 7))
+                    .count();
+            mainView.getUpcomingTasksLabel().setText("Tasks Due in 7 Days: " + upcoming);
+        });
     }
 
-    // Handle Priority Management Button
+    // Handle Priority Management Button (if not used anymore, can be removed)
     public void handlePriorityManagement() {
         // Placeholder for Priority Management window
         Alert alert = new Alert(AlertType.INFORMATION);
@@ -105,7 +139,8 @@ public class MainController {
         alert.showAndWait();
     }
 
-    // Handle Reminder Management Button
+    // Handle Reminder Management Button (if using openReminderManagementWindow, can
+    // remove this)
     public void handleReminderManagement() {
         // Placeholder for Reminder Management window
         Alert alert = new Alert(AlertType.INFORMATION);

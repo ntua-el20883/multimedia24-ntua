@@ -22,29 +22,63 @@ public class TaskView {
     private Button editTaskBtn;
     private Button deleteTaskBtn;
     private Button viewTaskBtn;
+    private TextField titleSearchField;
+    private ComboBox<String> categorySearchBox;
+    private ComboBox<String> prioritySearchBox;
+    private Button searchBtn;
 
-    public TaskView(Stage owner, List<Task> tasks) {
+    public TaskView(Stage owner, List<Task> tasks, List<String> categories, List<String> priorities) {
         stage = new Stage();
         stage.setTitle("Task Management");
         stage.initOwner(owner);
 
         root = new BorderPane();
-        scene = new Scene(root, 600, 400);
+        scene = new Scene(root, 600, 450);
 
         // Initialize UI Components
-        initializeUI(tasks);
+        initializeUI(tasks, categories, priorities);
 
         stage.setScene(scene);
     }
 
-    private void initializeUI(List<Task> tasks) {
+    private void initializeUI(List<Task> tasks, List<String> categories, List<String> priorities) {
         // Top: Header
         Label headerLabel = new Label("Manage Tasks");
         headerLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold;");
         HBox header = new HBox(headerLabel);
         header.setAlignment(Pos.CENTER);
         header.setPadding(new Insets(10));
-        root.setTop(header);
+
+        // Create search panel
+        HBox searchBox = new HBox(10);
+        searchBox.setAlignment(Pos.CENTER);
+        searchBox.setPadding(new Insets(10));
+
+        titleSearchField = new TextField();
+        titleSearchField.setPromptText("Search by Title");
+
+        categorySearchBox = new ComboBox<>();
+        categorySearchBox.getItems().add("Any");
+        categorySearchBox.getItems().addAll(categories);
+        categorySearchBox.setValue("Any");
+
+        prioritySearchBox = new ComboBox<>();
+        prioritySearchBox.getItems().add("Any");
+        prioritySearchBox.getItems().addAll(priorities);
+        prioritySearchBox.setValue("Any");
+
+        searchBtn = new Button("Search");
+
+        searchBox.getChildren().addAll(
+                new Label("Title:"), titleSearchField,
+                new Label("Category:"), categorySearchBox,
+                new Label("Priority:"), prioritySearchBox,
+                searchBtn);
+
+        // Add the search panel above the task list
+        VBox topSection = new VBox(10, header, searchBox);
+        topSection.setPadding(new Insets(10));
+        root.setTop(topSection);
 
         // Center: Task List
         taskListView = new ListView<>();
@@ -56,7 +90,7 @@ public class TaskView {
                 if (empty || task == null) {
                     setText(null);
                 } else {
-                    setText(task.getTitle() + " (" + task.getStatus() + ")");
+                    setText(task.getTitle() + " | " + task.getCategory() + " | " + task.getPriority() + " | " + task.getDeadline());
                 }
             }
         });
@@ -97,6 +131,22 @@ public class TaskView {
 
     public Button getViewTaskBtn() {
         return viewTaskBtn;
+    }
+
+    public TextField getTitleSearchField() {
+        return titleSearchField;
+    }
+
+    public ComboBox<String> getCategorySearchBox() {
+        return categorySearchBox;
+    }
+
+    public ComboBox<String> getPrioritySearchBox() {
+        return prioritySearchBox;
+    }
+
+    public Button getSearchBtn() {
+        return searchBtn;
     }
 
     // Method to refresh the task list

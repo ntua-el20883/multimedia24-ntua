@@ -102,20 +102,6 @@ public class DataStore {
 
     // ===== CATEGORY METHODS =====
 
-    // Load Categories
-    private void loadCategories() {
-        try (Reader reader = new FileReader(CATEGORIES_FILE)) {
-            List<Category> loadedCategories = jsonHandler.loadCategories(CATEGORIES_FILE);
-            if (loadedCategories != null) {
-                categories = loadedCategories;
-            }
-        } catch (IOException e) {
-            categories = new ArrayList<>(); // Initialize empty if file is missing
-        }
-
-        ensureDefaultCategory();
-    }
-
     // Ensure the "Default" category exists in the list
     private void ensureDefaultCategory() {
         boolean hasDefaultCategory = categories.stream()
@@ -233,8 +219,12 @@ public class DataStore {
             throw new IllegalArgumentException("The 'Default' priority cannot be deleted.");
         }
 
-        // Remove tasks associated with the deleted priority
-        tasks.removeIf(task -> task.getPriority().equalsIgnoreCase(priority.getName()));
+        // Reassign tasks that use the deleted priority to "Default"
+        for (Task task : tasks) {
+            if (task.getPriority().equalsIgnoreCase(priority.getName())) {
+                task.setPriority("Default");
+            }
+        }
 
         // Remove the priority
         priorities.remove(priority);
@@ -256,5 +246,63 @@ public class DataStore {
     // Save priorities to JSON
     private void savePriorities() {
         jsonHandler.savePriorities(PRIORITIES_FILE, priorities);
+    }
+
+    // ====== REMINDER METHODS =====
+
+    // Add a new reminder
+    public void addReminder(Reminder reminder) {
+        // Check if the task exists
+        boolean taskExists = tasks.stream()
+                .anyMatch(task -> task.getTitle().equalsIgnoreCase(reminder.getTaskTitle()));
+        if (!taskExists) {
+            throw new IllegalArgumentException("No task found with the title: " + reminder.getTaskTitle());
+        }
+
+        // Check for duplicate reminders for the same task on the same date
+        boolean exists = reminders.stream()
+                .anyMatch(r -> r.getTaskTitle().equalsIgnoreCase(reminder.getTaskTitle()) &&
+                        r.getDate().equals(reminder.getDate()));
+        if (exists) {
+            throw new IllegalArgumentException("A reminder for this task on the selected date already exists.");
+        }
+
+        reminders.add(reminder);
+        saveReminders();
+    }
+
+    // Edit an existing reminder
+    public void editReminder(Reminder oldReminder, Reminder newReminder) {
+        // Check if the task exists
+        boolean taskExists = tasks.stream()
+                .anyMatch(task -> task.getTitle().equalsIgnoreCase(newReminder.getTaskTitle()));
+        if (!taskExists) {
+            throw new IllegalArgumentException("No task found with the title: " + newReminder.getTaskTitle());
+        }
+
+        // Check for duplicate reminders (excluding the one being edited)
+        boolean exists = reminders.stream()
+                .anyMatch(r -> r.getTaskTitle().equalsIgnoreCase(newReminder.getTaskTitle()) &&
+                        r.getDate().equals(newReminder.getDate()) &&
+                        r != oldReminder);
+        if (exists) {
+            throw new IllegalArgumentException("A reminder for this task on the selected date already exists.");
+        }
+
+        // Update the reminder
+        oldReminder.setTaskTitle(newReminder.getTaskTitle());
+        oldReminder.setDate(newReminder.getDate());
+        saveReminders();
+    }
+
+    // Delete a reminder
+    public void deleteReminder(Reminder reminder) {
+        reminders.remove(reminder);
+        saveReminders();
+    }
+
+    // Save reminders to JSON
+    private void saveReminders() {
+        jsonHandler.saveReminders(REMINDERS_FILE, reminders);
     }
 }
