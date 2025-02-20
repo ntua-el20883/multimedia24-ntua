@@ -17,6 +17,13 @@ import java.util.List;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * A singleton class that manages the main data collections for tasks,
+ * categories, priorities, and reminders.
+ * <p>
+ * Provides methods to load data from and save data to JSON files,
+ * and includes logic to ensure a default category and priority.
+ */
 public class DataStore {
 
     private static DataStore instance = null;
@@ -28,11 +35,16 @@ public class DataStore {
 
     private JSONHandler jsonHandler;
 
+    // File paths for JSON data
     private static final String TASKS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/tasks.json";
     private static final String CATEGORIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/categories.json";
     private static final String PRIORITIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/priorities.json";
     private static final String REMINDERS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/reminders.json";
 
+    /**
+     * Private constructor for singleton usage. Initializes empty lists
+     * and a {@link JSONHandler} for loading/saving data.
+     */
     private DataStore() {
         tasks = new ArrayList<>();
         categories = new ArrayList<>();
@@ -41,7 +53,12 @@ public class DataStore {
         jsonHandler = new JSONHandler();
     }
 
-    // Singleton pattern to ensure only one instance
+    /**
+     * Retrieves the singleton instance of DataStore.
+     * If it doesn't exist yet, creates a new one.
+     *
+     * @return The singleton {@link DataStore} instance.
+     */
     public static DataStore getInstance() {
         if (instance == null) {
             instance = new DataStore();
@@ -49,7 +66,10 @@ public class DataStore {
         return instance;
     }
 
-    // Load all data from JSON files
+    /**
+     * Loads all data (tasks, categories, priorities, reminders) from
+     * their respective JSON files. Also ensures default category and priority.
+     */
     public void loadAllData() {
         tasks = jsonHandler.loadTasks(TASKS_FILE);
         categories = jsonHandler.loadCategories(CATEGORIES_FILE);
@@ -60,7 +80,10 @@ public class DataStore {
         ensureDefaultPriority();
     }
 
-    // Save all data to JSON files
+    /**
+     * Saves all data (tasks, categories, priorities, reminders) to
+     * their respective JSON files.
+     */
     public void saveAllData() {
         jsonHandler.saveTasks(TASKS_FILE, tasks);
         jsonHandler.saveCategories(CATEGORIES_FILE, categories);
@@ -68,26 +91,58 @@ public class DataStore {
         jsonHandler.saveReminders(REMINDERS_FILE, reminders);
     }
 
-    // Getters
+    // ========================
+    // GETTERS
+    // ========================
+
+    /**
+     * Returns the list of all tasks stored in memory.
+     *
+     * @return A {@link List} of {@link Task} objects.
+     */
     public List<Task> getAllTasks() {
         return tasks;
     }
 
+    /**
+     * Returns the list of all categories stored in memory.
+     *
+     * @return A {@link List} of {@link Category} objects.
+     */
     public List<Category> getAllCategories() {
         return categories;
     }
 
+    /**
+     * Returns the list of all priorities stored in memory.
+     *
+     * @return A {@link List} of {@link Priority} objects.
+     */
     public List<Priority> getAllPriorities() {
         return priorities;
     }
 
+    /**
+     * Returns the list of all reminders stored in memory.
+     *
+     * @return A {@link List} of {@link Reminder} objects.
+     */
     public List<Reminder> getAllReminders() {
         return reminders;
     }
 
-    // ===== TASK METHODS =====
+    // ========================
+    // TASK METHODS
+    // ========================
 
-    // Check if a task is due within a certain number of days
+    /**
+     * Checks whether a given {@link Task} is due within a specified number of days.
+     *
+     * @param task The task to check.
+     * @param days The number of days within which the task is considered 'due'.
+     * @return True if the task's deadline is within the specified days from now;
+     *         false otherwise.
+     */
     public boolean isTaskDueInDays(Task task, int days) {
         LocalDate today = LocalDate.now();
         LocalDate deadline = task.getDeadline();
@@ -95,14 +150,22 @@ public class DataStore {
         return daysBetween >= 0 && daysBetween <= days;
     }
 
-    // Helper method to save tasks
+    /**
+     * Saves the current list of tasks to the {@code TASKS_FILE}.
+     * Used internally after modifying tasks in memory.
+     */
     private void saveTasks() {
         jsonHandler.saveTasks(TASKS_FILE, tasks);
     }
 
-    // ===== CATEGORY METHODS =====
+    // ========================
+    // CATEGORY METHODS
+    // ========================
 
-    // Ensure the "Default" category exists in the list
+    /**
+     * Ensures a category named "Default" exists in memory. If not,
+     * it is created and saved.
+     */
     private void ensureDefaultCategory() {
         boolean hasDefaultCategory = categories.stream()
                 .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
@@ -112,7 +175,13 @@ public class DataStore {
         }
     }
 
-    // Additional Methods for Category Management
+    /**
+     * Adds a new category (except "Default", which is reserved).
+     * Updates categories.json after adding.
+     *
+     * @param category The {@link Category} object to be added.
+     * @throws IllegalArgumentException If the category name is "Default".
+     */
     public void addCategory(Category category) {
         if (category.getName().equalsIgnoreCase("Default")) {
             throw new IllegalArgumentException("The 'Default' category is reserved and cannot be manually created.");
@@ -121,6 +190,15 @@ public class DataStore {
         saveCategories();
     }
 
+    /**
+     * Edits an existing category's name. Prevents renaming of "Default".
+     * Also updates tasks that reference this category.
+     *
+     * @param oldCategory The current category object.
+     * @param newName     The new name to assign to this category.
+     * @throws IllegalArgumentException If the category is "Default" or if a
+     *                                  duplicate name exists.
+     */
     public void editCategory(Category oldCategory, String newName) {
         if (oldCategory.getName().equalsIgnoreCase("Default")) {
             throw new IllegalArgumentException("The 'Default' category cannot be renamed.");
@@ -133,25 +211,30 @@ public class DataStore {
             throw new IllegalArgumentException("A category with this name already exists.");
         }
 
-        // Update tasks with the old category name to the new category name
+        // Update tasks referencing the old category
         tasks.forEach(task -> {
             if (task.getCategory().equalsIgnoreCase(oldCategory.getName())) {
                 task.setCategory(newName);
             }
         });
 
-        // Update the category name
         oldCategory.setName(newName);
         saveCategories();
         saveTasks();
     }
 
+    /**
+     * Deletes a category (except "Default") and removes tasks assigned
+     * to that category from memory.
+     *
+     * @param category The category to delete.
+     * @throws IllegalArgumentException If attempting to delete "Default".
+     */
     public void deleteCategory(Category category) {
         if (category.getName().equalsIgnoreCase("Default")) {
             throw new IllegalArgumentException("The 'Default' category cannot be deleted.");
         }
 
-        // Remove the category
         categories.remove(category);
 
         // Remove tasks associated with the deleted category
@@ -161,7 +244,12 @@ public class DataStore {
         saveTasks();
     }
 
-    // Method to check if a category is in use
+    /**
+     * Checks if a given category is in use by any task.
+     *
+     * @param category The category to verify.
+     * @return True if at least one task references this category; false otherwise.
+     */
     public boolean isCategoryInUse(Category category) {
         for (Task task : tasks) {
             if (task.getCategory().equalsIgnoreCase(category.getName())) {
@@ -171,14 +259,26 @@ public class DataStore {
         return false;
     }
 
-    // Helper method to save categories (used by Category Management)
+    /**
+     * Saves the current list of categories to the {@code CATEGORIES_FILE}.
+     * Used internally after modifying categories in memory.
+     */
     private void saveCategories() {
         jsonHandler.saveCategories(CATEGORIES_FILE, categories);
     }
 
-    // ===== PRIORITY METHODS =====
+    // ========================
+    // PRIORITY METHODS
+    // ========================
 
-    // Add a new priority
+    /**
+     * Adds a new priority to the list, ensuring no duplicates.
+     * Saves after adding.
+     *
+     * @param priority The new {@link Priority} to add.
+     * @throws IllegalArgumentException If a priority with the same name already
+     *                                  exists.
+     */
     public void addPriority(Priority priority) {
         boolean exists = priorities.stream()
                 .anyMatch(p -> p.getName().equalsIgnoreCase(priority.getName()));
@@ -190,7 +290,15 @@ public class DataStore {
         savePriorities();
     }
 
-    // Edit an existing priority
+    /**
+     * Edits the name of an existing priority. Prevents renaming of "Default".
+     * Also updates tasks using this priority.
+     *
+     * @param oldPriority The priority to rename.
+     * @param newName     The new name for the priority.
+     * @throws IllegalArgumentException If the priority is "Default" or if a
+     *                                  duplicate name exists.
+     */
     public void editPriority(Priority oldPriority, String newName) {
         if (oldPriority.getName().equalsIgnoreCase("Default")) {
             throw new IllegalArgumentException("The 'Default' priority cannot be edited.");
@@ -210,10 +318,16 @@ public class DataStore {
 
         oldPriority.setName(newName);
         savePriorities();
-        saveTasks(); // Save updated tasks
+        saveTasks();
     }
 
-    // Delete a priority
+    /**
+     * Deletes the specified priority (except "Default") and reassigns any tasks
+     * using that priority to "Default".
+     *
+     * @param priority The priority to delete.
+     * @throws IllegalArgumentException If attempting to delete "Default".
+     */
     public void deletePriority(Priority priority) {
         if (priority.getName().equalsIgnoreCase("Default")) {
             throw new IllegalArgumentException("The 'Default' priority cannot be deleted.");
@@ -226,14 +340,15 @@ public class DataStore {
             }
         }
 
-        // Remove the priority
         priorities.remove(priority);
 
         savePriorities();
-        saveTasks(); // Save updated tasks
+        saveTasks();
     }
 
-    // Ensure the "Default" priority exists in the list
+    /**
+     * Ensures the 'Default' priority exists in memory. If not, adds it and saves.
+     */
     private void ensureDefaultPriority() {
         boolean hasDefaultPriority = priorities.stream()
                 .anyMatch(p -> p.getName().equalsIgnoreCase("Default"));
@@ -243,14 +358,26 @@ public class DataStore {
         }
     }
 
-    // Save priorities to JSON
+    /**
+     * Saves the current list of priorities to the {@code PRIORITIES_FILE}.
+     * Used internally after modifying priorities in memory.
+     */
     private void savePriorities() {
         jsonHandler.savePriorities(PRIORITIES_FILE, priorities);
     }
 
-    // ====== REMINDER METHODS =====
+    // ========================
+    // REMINDER METHODS
+    // ========================
 
-    // Add a new reminder
+    /**
+     * Adds a new reminder. Ensures the task exists and avoids duplicate reminders
+     * for the same task on the same date.
+     *
+     * @param reminder The new {@link Reminder} to add.
+     * @throws IllegalArgumentException If the referenced task doesn't exist or if a
+     *                                  duplicate reminder is found.
+     */
     public void addReminder(Reminder reminder) {
         // Check if the task exists
         boolean taskExists = tasks.stream()
@@ -259,7 +386,7 @@ public class DataStore {
             throw new IllegalArgumentException("No task found with the title: " + reminder.getTaskTitle());
         }
 
-        // Check for duplicate reminders for the same task on the same date
+        // Check for duplicate reminders
         boolean exists = reminders.stream()
                 .anyMatch(r -> r.getTaskTitle().equalsIgnoreCase(reminder.getTaskTitle()) &&
                         r.getDate().equals(reminder.getDate()));
@@ -271,7 +398,15 @@ public class DataStore {
         saveReminders();
     }
 
-    // Edit an existing reminder
+    /**
+     * Edits an existing reminder by replacing old data with new reminder data.
+     * Ensures the task exists and that no duplicate reminder is created.
+     *
+     * @param oldReminder The existing reminder to update.
+     * @param newReminder The new reminder data.
+     * @throws IllegalArgumentException If the task doesn't exist or a duplicate
+     *                                  reminder date is found.
+     */
     public void editReminder(Reminder oldReminder, Reminder newReminder) {
         // Check if the task exists
         boolean taskExists = tasks.stream()
@@ -295,13 +430,20 @@ public class DataStore {
         saveReminders();
     }
 
-    // Delete a reminder
+    /**
+     * Deletes the specified reminder from the list and saves the updated reminders.
+     *
+     * @param reminder The {@link Reminder} object to remove.
+     */
     public void deleteReminder(Reminder reminder) {
         reminders.remove(reminder);
         saveReminders();
     }
 
-    // Save reminders to JSON
+    /**
+     * Saves the current list of reminders to the {@code REMINDERS_FILE}.
+     * Used internally after modifying reminders in memory.
+     */
     private void saveReminders() {
         jsonHandler.saveReminders(REMINDERS_FILE, reminders);
     }
