@@ -18,43 +18,59 @@ import view.CategoryView;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class responsible for handling user actions related to
+ * Category management. It interacts with the {@link CategoryView}
+ * to add, edit, and delete categories, and updates the underlying data
+ * via {@link DataStore}.
+ */
 public class CategoryController {
 
     private CategoryView categoryView;
     private DataStore dataStore;
 
+    /**
+     * Constructs a new CategoryController and binds UI actions from
+     * the given {@link CategoryView} to category management operations.
+     *
+     * @param view The {@link CategoryView} to control.
+     */
     public CategoryController(CategoryView view) {
         this.categoryView = view;
         this.dataStore = DataStore.getInstance();
         initialize();
     }
 
+    /**
+     * Initializes event handlers for add, edit, and delete category buttons
+     * in the {@link CategoryView}.
+     */
     private void initialize() {
-        // Set up button actions
         categoryView.getAddCategoryBtn().setOnAction(e -> openAddCategoryDialog());
         categoryView.getEditCategoryBtn().setOnAction(e -> openEditCategoryDialog());
         categoryView.getDeleteCategoryBtn().setOnAction(e -> deleteSelectedCategory());
     }
 
-    // Method to open Add Category Dialog
+    /**
+     * Opens a dialog for creating a new category.
+     * Validates inputs, checks for duplicates, and saves the new category
+     * to {@link DataStore}.
+     */
     private void openAddCategoryDialog() {
         Stage dialog = new Stage();
         dialog.setTitle("Add New Category");
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(categoryView.getStage());
-        dialog.setResizable(false); // Fixed size
+        dialog.setResizable(false);
 
         GridPane grid = createCategoryFormGrid();
 
-        // Form Fields
         Label nameLabel = new Label("Category Name:");
         TextField nameField = new TextField();
 
-        // Add components to grid
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -96,7 +112,10 @@ public class CategoryController {
         dialog.showAndWait();
     }
 
-    // Method to open Edit Category Dialog
+    /**
+     * Opens a dialog for editing the currently selected category.
+     * Ensures "Default" cannot be renamed and checks for duplicates.
+     */
     private void openEditCategoryDialog() {
         Category selectedCategory = categoryView.getCategoryListView().getSelectionModel().getSelectedItem();
         if (selectedCategory == null) {
@@ -118,15 +137,12 @@ public class CategoryController {
 
         GridPane grid = createCategoryFormGrid();
 
-        // Form Fields
         Label nameLabel = new Label("New Category Name:");
         TextField nameField = new TextField(selectedCategory.getName());
 
-        // Add components to grid
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -170,7 +186,11 @@ public class CategoryController {
         dialog.showAndWait();
     }
 
-    // Method to delete selected category
+    /**
+     * Deletes the currently selected category after confirming with the user.
+     * Prevents deletion of "Default" and also removes all tasks under that
+     * category.
+     */
     private void deleteSelectedCategory() {
         Category selectedCategory = categoryView.getCategoryListView().getSelectionModel().getSelectedItem();
         if (selectedCategory == null) {
@@ -187,7 +207,8 @@ public class CategoryController {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Delete Confirmation");
         confirmation.setHeaderText(null);
-        confirmation.setContentText("Are you sure you want to delete the selected category and its associated tasks (along with their respective reminders)?");
+        confirmation.setContentText(
+                "Are you sure you want to delete the selected category and its associated tasks (along with their respective reminders)?");
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -196,7 +217,12 @@ public class CategoryController {
         }
     }
 
-    // Helper method to create a GridPane for forms
+    /**
+     * Creates a basic {@link GridPane} with standard padding and spacing,
+     * suitable for category input forms.
+     *
+     * @return A new {@link GridPane} instance configured for form usage.
+     */
     private GridPane createCategoryFormGrid() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
@@ -205,7 +231,14 @@ public class CategoryController {
         return grid;
     }
 
-    // Helper method to show alerts
+    /**
+     * Displays an alert dialog on the JavaFX Application Thread with the given
+     * parameters.
+     *
+     * @param alertType The type of alert (e.g. ERROR, WARNING, INFORMATION).
+     * @param title     The title of the alert dialog.
+     * @param message   The message body displayed in the alert.
+     */
     private void showAlert(AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
@@ -216,7 +249,13 @@ public class CategoryController {
         });
     }
 
-    // Method to update tasks with the new category name
+    /**
+     * Reassigns every task with an old category name to the specified new name,
+     * and saves the updated tasks to {@link DataStore}.
+     *
+     * @param oldName The old category name that tasks currently have.
+     * @param newName The new category name to assign to these tasks.
+     */
     private void updateTasksWithCategory(String oldName, String newName) {
         List<Task> tasks = dataStore.getAllTasks();
         boolean updated = false;
@@ -230,7 +269,6 @@ public class CategoryController {
 
         if (updated) {
             dataStore.saveAllData();
-            // Optionally, refresh task list or notify user
         }
     }
 }

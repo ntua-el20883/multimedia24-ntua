@@ -18,25 +18,44 @@ import view.PriorityView;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class responsible for handling user actions related to
+ * Priority management. It interacts with the {@link PriorityView} to
+ * add, edit, and delete priority levels, updating the underlying
+ * {@link DataStore} accordingly.
+ */
 public class PriorityController {
 
     private PriorityView priorityView;
     private DataStore dataStore;
 
+    /**
+     * Constructs a new PriorityController and initializes event handlers
+     * for the provided {@link PriorityView}.
+     *
+     * @param view The {@link PriorityView} to be controlled.
+     */
     public PriorityController(PriorityView view) {
         this.priorityView = view;
         this.dataStore = DataStore.getInstance();
         initialize();
     }
 
+    /**
+     * Sets up button actions for adding, editing, and deleting priorities
+     * in the {@link PriorityView}.
+     */
     private void initialize() {
-        // Set up button actions
         priorityView.getAddPriorityBtn().setOnAction(e -> openAddPriorityDialog());
         priorityView.getEditPriorityBtn().setOnAction(e -> openEditPriorityDialog());
         priorityView.getDeletePriorityBtn().setOnAction(e -> deleteSelectedPriority());
     }
 
-    // Method to open Add Priority Dialog
+    /**
+     * Opens a dialog that allows the user to create a new priority level.
+     * Validates the user input and checks for duplicate priority names
+     * before saving.
+     */
     private void openAddPriorityDialog() {
         Stage dialog = new Stage();
         dialog.setTitle("Add New Priority");
@@ -46,15 +65,12 @@ public class PriorityController {
 
         GridPane grid = createPriorityFormGrid();
 
-        // Form Fields
         Label nameLabel = new Label("Priority Name:");
         TextField nameField = new TextField();
 
-        // Add components to grid
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -96,7 +112,11 @@ public class PriorityController {
         dialog.showAndWait();
     }
 
-    // Method to open Edit Priority Dialog
+    /**
+     * Opens a dialog that allows the user to rename the currently selected
+     * priority.
+     * Prevents renaming of the "Default" priority and checks for duplicates.
+     */
     private void openEditPriorityDialog() {
         Priority selectedPriority = priorityView.getPriorityListView().getSelectionModel().getSelectedItem();
         if (selectedPriority == null) {
@@ -118,15 +138,12 @@ public class PriorityController {
 
         GridPane grid = createPriorityFormGrid();
 
-        // Form Fields
         Label nameLabel = new Label("New Priority Name:");
         TextField nameField = new TextField(selectedPriority.getName());
 
-        // Add components to grid
         grid.add(nameLabel, 0, 0);
         grid.add(nameField, 1, 0);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -170,7 +187,11 @@ public class PriorityController {
         dialog.showAndWait();
     }
 
-    // Method to delete selected priority
+    /**
+     * Deletes the currently selected priority after asking for confirmation.
+     * Prevents deletion of the "Default" priority. Once deleted, any tasks
+     * using this priority are assigned to "Default".
+     */
     private void deleteSelectedPriority() {
         Priority selectedPriority = priorityView.getPriorityListView().getSelectionModel().getSelectedItem();
         if (selectedPriority == null) {
@@ -187,7 +208,8 @@ public class PriorityController {
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Delete Confirmation");
         confirmation.setHeaderText(null);
-        confirmation.setContentText("Are you sure you want to delete the selected priority? Its associated tasks will be set to the 'Default' Priority.");
+        confirmation.setContentText(
+                "Are you sure you want to delete the selected priority? Its associated tasks will be set to the 'Default' Priority.");
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -196,7 +218,12 @@ public class PriorityController {
         }
     }
 
-    // Helper method to create a GridPane for forms
+    /**
+     * Creates a {@link GridPane} with spacing and padding for a priority form
+     * dialog.
+     *
+     * @return A configured {@link GridPane} for priority input dialogs.
+     */
     private GridPane createPriorityFormGrid() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
@@ -205,7 +232,14 @@ public class PriorityController {
         return grid;
     }
 
-    // Helper method to show alerts
+    /**
+     * Displays an alert dialog on the JavaFX Application Thread with the specified
+     * parameters.
+     *
+     * @param alertType The {@link AlertType} (e.g., ERROR, WARNING, INFORMATION).
+     * @param title     The title of the alert dialog.
+     * @param message   The main message body displayed within the alert.
+     */
     private void showAlert(AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
@@ -216,7 +250,13 @@ public class PriorityController {
         });
     }
 
-    // Method to update tasks with the new priority name
+    /**
+     * Updates tasks with the old priority name to a newly specified name
+     * and persists these changes to {@link DataStore}.
+     *
+     * @param oldName The old priority name to look for in tasks.
+     * @param newName The new priority name to apply to matching tasks.
+     */
     private void updateTasksWithPriority(String oldName, String newName) {
         List<Task> tasks = dataStore.getAllTasks();
         boolean updated = false;
@@ -230,7 +270,6 @@ public class PriorityController {
 
         if (updated) {
             dataStore.saveAllData();
-            // Optionally, refresh task list or notify user
         }
     }
 }

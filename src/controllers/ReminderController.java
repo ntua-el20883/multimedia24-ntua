@@ -21,34 +21,61 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class responsible for managing reminders through the
+ * {@link ReminderView}.
+ * It allows users to add, edit, and delete reminders. This class handles form
+ * dialogs,
+ * input validation, and updates the underlying {@link DataStore} accordingly.
+ */
 public class ReminderController {
 
     private ReminderView reminderView;
     private DataStore dataStore;
 
+    /**
+     * Constructs a new ReminderController tied to the given {@link ReminderView}.
+     * Initializes event handlers for adding, editing, and deleting reminders.
+     *
+     * @param view The {@link ReminderView} to be controlled.
+     */
     public ReminderController(ReminderView view) {
         this.reminderView = view;
         this.dataStore = DataStore.getInstance();
         initialize();
     }
 
+    /**
+     * Sets up button actions in the {@link ReminderView} to open dialogs
+     * for adding, editing, or deleting reminders.
+     */
     private void initialize() {
-        // Set up button actions
         reminderView.getAddReminderBtn().setOnAction(e -> openAddReminderDialog());
         reminderView.getEditReminderBtn().setOnAction(e -> openEditReminderDialog());
         reminderView.getDeleteReminderBtn().setOnAction(e -> deleteSelectedReminder());
     }
 
-    // Helper method to create a GridPane for forms
+    /**
+     * Creates a {@link GridPane} with padding and spacing, suitable for
+     * reminder form dialogs.
+     *
+     * @return A configured {@link GridPane} for reminder dialogs.
+     */
     private GridPane createReminderFormGrid() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
-        grid.setVgap(15); // Increased vertical gap
+        grid.setVgap(15);
         grid.setHgap(10);
         return grid;
     }
 
-    // Helper method to show alerts
+    /**
+     * Displays an alert dialog on the JavaFX Application Thread.
+     *
+     * @param alertType The {@link AlertType} (e.g., ERROR, WARNING, INFORMATION).
+     * @param title     The title of the alert dialog.
+     * @param message   The message body shown in the alert.
+     */
     private void showAlert(AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
@@ -59,7 +86,11 @@ public class ReminderController {
         });
     }
 
-    // Method to open Add Reminder Dialog
+    /**
+     * Opens a dialog for creating a new reminder. Allows the user to select a task,
+     * choose a reminder option (e.g., 1 day before deadline, or a specific date),
+     * and validates that the date is valid and before the task's deadline.
+     */
     private void openAddReminderDialog() {
         Stage dialog = new Stage();
         dialog.setTitle("Add New Reminder");
@@ -69,18 +100,17 @@ public class ReminderController {
 
         GridPane grid = createReminderFormGrid();
 
-        // Form Fields
         Label taskLabel = new Label("Task:");
         ComboBox<String> taskComboBox = new ComboBox<>();
 
-        // Fetch tasks that are not completed
+        // Load active (non-completed) tasks
         List<String> activeTaskTitles = dataStore.getAllTasks().stream()
                 .filter(task -> !task.getStatus().equalsIgnoreCase("Completed"))
                 .map(Task::getTitle)
                 .toList();
         taskComboBox.getItems().addAll(activeTaskTitles);
 
-        // Label to display the selected task's deadline
+        // Display the deadline of the selected task
         Label taskDeadlineLabel = new Label("Deadline: ");
 
         Label optionLabel = new Label("Reminder Option:");
@@ -96,8 +126,8 @@ public class ReminderController {
         Label dateLabel = new Label("Reminder Date:");
 
         DatePicker datePicker = new DatePicker();
-        datePicker.setDisable(true); // Disabled by default
-        datePicker.setDayCellFactory(picker -> new DateCell() { // Highlight past dates with red
+        datePicker.setDisable(true);
+        datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -108,7 +138,7 @@ public class ReminderController {
             }
         });
 
-        // Update the deadline label when a task is selected
+        // Update deadline label when a user selects a task
         taskComboBox.setOnAction(event -> {
             String selectedTitle = taskComboBox.getValue();
             if (selectedTitle != null) {
@@ -121,7 +151,7 @@ public class ReminderController {
             }
         });
 
-        // Add a listener to handle selection changes
+        // Adjust date based on the reminder option
         reminderOptionComboBox.setOnAction(event -> {
             String selectedOption = reminderOptionComboBox.getValue();
             if (selectedOption == null)
@@ -182,7 +212,6 @@ public class ReminderController {
             }
         });
 
-        // Add components to grid
         grid.add(taskLabel, 0, 0);
         grid.add(taskComboBox, 1, 0);
 
@@ -194,7 +223,6 @@ public class ReminderController {
         grid.add(dateLabel, 0, 3);
         grid.add(datePicker, 1, 3);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -203,7 +231,7 @@ public class ReminderController {
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
         grid.add(buttonBox, 1, 4);
 
-        // Button Actions
+        // Save Actin
         saveBtn.setOnAction(event -> {
             String taskTitle = taskComboBox.getValue();
             String selectedOption = reminderOptionComboBox.getValue();
@@ -215,7 +243,7 @@ public class ReminderController {
                 return;
             }
 
-            // Check if the date is before the Task's deadline
+            // Validate Date
             Task selectedTask = dataStore.getAllTasks().stream()
                     .filter(task -> task.getTitle().equalsIgnoreCase(taskTitle))
                     .findFirst()
@@ -247,7 +275,11 @@ public class ReminderController {
         dialog.showAndWait();
     }
 
-    // Method to open Edit Reminder Dialog
+    /**
+     * Opens a dialog to edit the currently selected reminder. Allows users to
+     * change the associated task and date. Enforces date validation and ensures
+     * the reminder date remains valid relative to the task deadline.
+     */
     private void openEditReminderDialog() {
         Reminder selectedReminder = reminderView.getReminderListView().getSelectionModel().getSelectedItem();
         if (selectedReminder == null) {
@@ -259,15 +291,14 @@ public class ReminderController {
         dialog.setTitle("Edit Reminder");
         dialog.initModality(Modality.APPLICATION_MODAL);
         dialog.initOwner(reminderView.getStage());
-        dialog.setResizable(false); // Fixed size
+        dialog.setResizable(false);
 
         GridPane grid = createReminderFormGrid();
 
-        // Form Fields
         Label taskLabel = new Label("Task:");
         ComboBox<String> taskComboBox = new ComboBox<>();
 
-        // Fetch tasks that are not completed
+        // Load active (non-completed) tasks
         List<String> activeTaskTitles = dataStore.getAllTasks().stream()
                 .filter(task -> !task.getStatus().equalsIgnoreCase("Completed"))
                 .map(Task::getTitle)
@@ -275,9 +306,8 @@ public class ReminderController {
         taskComboBox.getItems().addAll(activeTaskTitles);
         taskComboBox.setValue(selectedReminder.getTaskTitle());
 
-        // Label to display the selected task's deadline
+        // Display the selected task's deadline
         Label taskDeadlineLabel = new Label("Deadline: ");
-        // Immediately update the deadline label using the current task selection
         String initialTask = taskComboBox.getValue();
         if (initialTask != null) {
             Task initialSelectedTask = dataStore.getAllTasks().stream()
@@ -325,8 +355,8 @@ public class ReminderController {
         } else {
             datePicker.setDisable(true);
         }
-        
-        datePicker.setDayCellFactory(picker -> new DateCell() { // Highlight past dates with red
+
+        datePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
                 super.updateItem(date, empty);
@@ -337,7 +367,7 @@ public class ReminderController {
             }
         });
 
-        // Add a listener to handle selection changes
+        // Adjust the date picker based on changes to the reminderOptionComboBox
         reminderOptionComboBox.setOnAction(event -> {
             String selectedOption = reminderOptionComboBox.getValue();
             if (selectedOption == null)
@@ -398,7 +428,6 @@ public class ReminderController {
             }
         });
 
-        // Add components to grid
         grid.add(taskLabel, 0, 0);
         grid.add(taskComboBox, 1, 0);
 
@@ -410,7 +439,6 @@ public class ReminderController {
         grid.add(dateLabel, 0, 3);
         grid.add(datePicker, 1, 3);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -419,7 +447,7 @@ public class ReminderController {
         buttonBox.setPadding(new Insets(10, 0, 0, 0));
         grid.add(buttonBox, 1, 4);
 
-        // Button Actions
+        // Save Action
         saveBtn.setOnAction(event -> {
             String newTaskTitle = taskComboBox.getValue();
             String selectedOption = reminderOptionComboBox.getValue();
@@ -471,7 +499,10 @@ public class ReminderController {
         dialog.showAndWait();
     }
 
-    // Method to delete selected reminder
+    /**
+     * Deletes the currently selected reminder after user confirmation.
+     * If no reminder is selected, displays a warning alert.
+     */
     private void deleteSelectedReminder() {
         Reminder selectedReminder = reminderView.getReminderListView().getSelectionModel().getSelectedItem();
         if (selectedReminder == null) {
@@ -479,7 +510,6 @@ public class ReminderController {
             return;
         }
 
-        // Confirmation Dialog
         Alert confirmation = new Alert(AlertType.CONFIRMATION);
         confirmation.setTitle("Delete Confirmation");
         confirmation.setHeaderText(null);

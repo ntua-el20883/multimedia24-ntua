@@ -22,67 +22,86 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller class for handling task-related operations in the Task Management
+ * window.
+ * It includes task creation, editing, deletion, viewing details, and searching.
+ */
 public class TaskController {
 
-    private TaskView  taskView;
+    private TaskView taskView;
     private DataStore dataStore;
 
+    /**
+     * Constructs a TaskController with the specified TaskView.
+     * 
+     * @param view The TaskView associated with this controller.
+     */
     public TaskController(TaskView view) {
         this.taskView = view;
         this.dataStore = DataStore.getInstance();
         initialize();
     }
 
+    /**
+     * Initializes the event listeners for task-related UI components.
+     */
     private void initialize() {
-        // Set up button actions
-         taskView.getAddTaskBtn().setOnAction(e -> openAddTaskDialog());
-         taskView.getEditTaskBtn().setOnAction(e -> openEditTaskDialog());
-         taskView.getDeleteTaskBtn().setOnAction(e -> deleteSelectedTask());
-         taskView.getViewTaskBtn().setOnAction(e -> viewSelectedTaskDetails());
-         taskView.getSearchBtn().setOnAction(e -> searchTasks());
+        taskView.getAddTaskBtn().setOnAction(e -> openAddTaskDialog());
+        taskView.getEditTaskBtn().setOnAction(e -> openEditTaskDialog());
+        taskView.getDeleteTaskBtn().setOnAction(e -> deleteSelectedTask());
+        taskView.getViewTaskBtn().setOnAction(e -> viewSelectedTaskDetails());
+        taskView.getSearchBtn().setOnAction(e -> searchTasks());
     }
 
+    /**
+     * Searches for tasks based on the user-defined criteria.
+     * Filters tasks by title (partial match), category (exact match), and priority
+     * (exact match).
+     * Updates the task list in the view.
+     */
     private void searchTasks() {
         String titleQuery = taskView.getTitleSearchField().getText().trim().toLowerCase();
         String categoryQuery = taskView.getCategorySearchBox().getValue();
         String priorityQuery = taskView.getPrioritySearchBox().getValue();
-    
-        List<Task> filteredTasks = dataStore.getAllTasks().stream()
-            .filter(task -> titleQuery.isEmpty() || task.getTitle().toLowerCase().contains(titleQuery))
-            .filter(task -> "Any".equals(categoryQuery) || task.getCategory().equalsIgnoreCase(categoryQuery))
-            .filter(task -> "Any".equals(priorityQuery) || task.getPriority().equalsIgnoreCase(priorityQuery))
-            .toList();
-    
-        taskView.refreshTaskList(filteredTasks);
-    }    
 
-    // Method to open Add Task Dialog
+        List<Task> filteredTasks = dataStore.getAllTasks().stream()
+                .filter(task -> titleQuery.isEmpty() || task.getTitle().toLowerCase().contains(titleQuery))
+                .filter(task -> "Any".equals(categoryQuery) || task.getCategory().equalsIgnoreCase(categoryQuery))
+                .filter(task -> "Any".equals(priorityQuery) || task.getPriority().equalsIgnoreCase(priorityQuery))
+                .toList();
+
+        taskView.refreshTaskList(filteredTasks);
+    }
+
+    /**
+     * Opens a dialog for adding a new task.
+     * Ensures valid user input and prevents duplicate task titles.
+     * Saves the new task to the DataStore.
+     */
     private void openAddTaskDialog() {
         Stage dialog = new Stage();
         dialog.setTitle("Add New Task");
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner( taskView.getStage());
-        dialog.setResizable(true); // Make dialog resizable
+        dialog.initOwner(taskView.getStage());
+        dialog.setResizable(true);
 
         GridPane grid = createTaskFormGrid();
 
-        // Define column constraints
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(30); // Labels take 30% width
+        col1.setPercentWidth(30);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(70); // Fields take 70% width
+        col2.setPercentWidth(70);
         grid.getColumnConstraints().addAll(col1, col2);
 
-        // Form Fields
         TextField titleField = new TextField();
         TextArea descriptionArea = new TextArea();
-        descriptionArea.setPrefRowCount(3); // Set preferred row count for better visibility
+        descriptionArea.setPrefRowCount(3);
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> priorityComboBox = new ComboBox<>();
         DatePicker deadlinePicker = new DatePicker();
         ComboBox<String> statusComboBox = new ComboBox<>();
 
-        // Disable past dates in DatePicker
         deadlinePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
@@ -94,7 +113,6 @@ public class TaskController {
             }
         });
 
-        // Populate Category and Priority ComboBoxes
         List<Category> categories = dataStore.getAllCategories();
         for (Category cat : categories) {
             categoryComboBox.getItems().add(cat.getName());
@@ -105,10 +123,8 @@ public class TaskController {
             priorityComboBox.getItems().add(pri.getName());
         }
 
-        // Populate Status ComboBox
         statusComboBox.getItems().addAll("Open", "In Progress", "Completed", "Delayed", "Postponed");
 
-        // Add components to grid with proper alignment
         grid.add(new Label("Title:"), 0, 0);
         grid.add(titleField, 1, 0);
 
@@ -127,16 +143,14 @@ public class TaskController {
         grid.add(new Label("Status:"), 0, 5);
         grid.add(statusComboBox, 1, 5);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
         HBox buttonBox = new HBox(10, saveBtn, cancelBtn);
-        buttonBox.setPadding(new Insets(20, 0, 0, 0)); // Increased top padding
-        buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align buttons to the right
+        buttonBox.setPadding(new Insets(20, 0, 0, 0));
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
         grid.add(buttonBox, 1, 6);
 
-        // Button Actions
         saveBtn.setOnAction(e -> {
             String title = titleField.getText().trim();
             String description = descriptionArea.getText().trim();
@@ -145,13 +159,11 @@ public class TaskController {
             LocalDate deadline = deadlinePicker.getValue();
             String status = statusComboBox.getValue();
 
-            // Validate Inputs
             if (title.isEmpty() || description.isEmpty() || deadline == null) {
                 showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
                 return;
             }
 
-            // Check for duplicate task titles
             boolean duplicate = dataStore.getAllTasks().stream()
                     .anyMatch(task -> task.getTitle().equalsIgnoreCase(title));
             if (duplicate) {
@@ -159,11 +171,9 @@ public class TaskController {
                 return;
             }
 
-            // If the user doesn't select a category, set category to "Default"
             if (category == null || category.isEmpty()) {
                 category = "Default";
 
-                // Ensure "Default" category exists in DataStore
                 boolean hasDefaultCategory = dataStore.getAllCategories().stream()
                         .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
                 if (!hasDefaultCategory) {
@@ -171,11 +181,9 @@ public class TaskController {
                 }
             }
 
-            // If the user doesn't select a priority, set priority to "Default"
             if (priority == null || priority.isEmpty()) {
                 priority = "Default";
 
-                // Ensure "Default" category exists in DataStore
                 boolean hasDefaultPriority = dataStore.getAllPriorities().stream()
                         .anyMatch(pri -> pri.getName().equalsIgnoreCase("Default"));
                 if (!hasDefaultPriority) {
@@ -183,26 +191,21 @@ public class TaskController {
                 }
             }
 
-            // If the user doesn't select a status, set status to "Open"
             if (status == null || status.isEmpty()) {
                 status = "Open";
             }
 
-            // Additional Date Validation
             if (deadline.isBefore(LocalDate.now())) {
                 showAlert(Alert.AlertType.ERROR, "Invalid Deadline", "Deadline cannot be in the past.");
                 return;
             }
 
-            // Create and add new task
             Task newTask = new Task(title, description, category, priority, deadline, status);
             dataStore.getAllTasks().add(newTask);
             dataStore.saveAllData();
 
-            // Refresh task list
-             taskView.refreshTaskList(dataStore.getAllTasks());
+            taskView.refreshTaskList(dataStore.getAllTasks());
 
-            // Update main statistics
             MainController.getInstance().updateStatistics();
 
             dialog.close();
@@ -215,9 +218,14 @@ public class TaskController {
         dialog.showAndWait();
     }
 
-    // Method to open Edit Task Dialog
+    /**
+     * Opens a dialog for editing the selected task. Validates user input,
+     * updates the task in the data store, and, if the task is marked as
+     * "Completed", deletes its associated reminders.
+     * If no task is selected, an alert is displayed.
+     */
     private void openEditTaskDialog() {
-        Task selectedTask =  taskView.getTaskListView().getSelectionModel().getSelectedItem();
+        Task selectedTask = taskView.getTaskListView().getSelectionModel().getSelectedItem();
         if (selectedTask == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a task to edit.");
             return;
@@ -226,28 +234,25 @@ public class TaskController {
         Stage dialog = new Stage();
         dialog.setTitle("Edit Task");
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner( taskView.getStage());
-        dialog.setResizable(true); // Make dialog resizable
+        dialog.initOwner(taskView.getStage());
+        dialog.setResizable(true);
 
         GridPane grid = createTaskFormGrid();
 
-        // Define column constraints
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(30); // Labels take 30% width
+        col1.setPercentWidth(30);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(70); // Fields take 70% width
+        col2.setPercentWidth(70);
         grid.getColumnConstraints().addAll(col1, col2);
 
-        // Form Fields
         TextField titleField = new TextField(selectedTask.getTitle());
         TextArea descriptionArea = new TextArea(selectedTask.getDescription());
-        descriptionArea.setPrefRowCount(3); // Set preferred row count for better visibility
+        descriptionArea.setPrefRowCount(3);
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> priorityComboBox = new ComboBox<>();
         DatePicker deadlinePicker = new DatePicker(selectedTask.getDeadline());
         ComboBox<String> statusComboBox = new ComboBox<>();
 
-        // Disable past dates in DatePicker
         deadlinePicker.setDayCellFactory(picker -> new DateCell() {
             @Override
             public void updateItem(LocalDate date, boolean empty) {
@@ -259,7 +264,6 @@ public class TaskController {
             }
         });
 
-        // Populate Category and Priority ComboBoxes
         List<Category> categories = dataStore.getAllCategories();
         for (Category cat : categories) {
             categoryComboBox.getItems().add(cat.getName());
@@ -272,11 +276,9 @@ public class TaskController {
         }
         priorityComboBox.setValue(selectedTask.getPriority());
 
-        // Populate Status ComboBox
         statusComboBox.getItems().addAll("Open", "In Progress", "Completed", "Delayed", "Postponed");
         statusComboBox.setValue(selectedTask.getStatus());
 
-        // Add components to grid with proper alignment
         grid.add(new Label("Title:"), 0, 0);
         grid.add(titleField, 1, 0);
 
@@ -295,7 +297,6 @@ public class TaskController {
         grid.add(new Label("Status:"), 0, 5);
         grid.add(statusComboBox, 1, 5);
 
-        // Buttons
         Button saveBtn = new Button("Save");
         Button cancelBtn = new Button("Cancel");
 
@@ -304,7 +305,6 @@ public class TaskController {
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         grid.add(buttonBox, 1, 6);
 
-        // Button Actions
         saveBtn.setOnAction(e -> {
             String title = titleField.getText().trim();
             String description = descriptionArea.getText().trim();
@@ -313,14 +313,12 @@ public class TaskController {
             LocalDate deadline = deadlinePicker.getValue();
             String status = statusComboBox.getValue();
 
-            // Validate Inputs
             if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null
                     || status == null) {
                 showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
                 return;
             }
 
-            // Check for duplicate task titles excluding the current task
             boolean duplicate = dataStore.getAllTasks().stream()
                     .anyMatch(task -> task.getTitle().equalsIgnoreCase(title) && task != selectedTask);
             if (duplicate) {
@@ -328,17 +326,14 @@ public class TaskController {
                 return;
             }
 
-            // Additional Date Validation
             if (deadline.isBefore(LocalDate.now()) && !selectedTask.getStatus().equalsIgnoreCase("Delayed")) {
                 showAlert(Alert.AlertType.ERROR, "Invalid Deadline", "Deadline cannot be in the past.");
                 return;
             }
 
-            // If the user doesn't select a category, set category to "Default"
             if (category == null || category.isEmpty()) {
                 category = "Default";
 
-                // Ensure "Default" category exists in DataStore
                 boolean hasDefaultCategory = dataStore.getAllCategories().stream()
                         .anyMatch(cat -> cat.getName().equalsIgnoreCase("Default"));
                 if (!hasDefaultCategory) {
@@ -346,11 +341,9 @@ public class TaskController {
                 }
             }
 
-            // If the user doesn't select a priority, set priority to "Default"
             if (priority == null || priority.isEmpty()) {
                 priority = "Default";
 
-                // Ensure "Default" category exists in DataStore
                 boolean hasDefaultPriority = dataStore.getAllPriorities().stream()
                         .anyMatch(pri -> pri.getName().equalsIgnoreCase("Default"));
                 if (!hasDefaultPriority) {
@@ -358,28 +351,23 @@ public class TaskController {
                 }
             }
 
-            // If the user doesn't select a status, set status to "Open"
             if (status == null || status.isEmpty()) {
                 status = "Open";
-            }            
+            }
 
-            // If a Task passes to Completed, delete its Reminders
             if (status.equalsIgnoreCase("Completed")) {
-                // Remove associated reminders
                 List<Reminder> remindersToRemove = dataStore.getAllReminders().stream()
                         .filter(reminder -> reminder.getTaskTitle().equalsIgnoreCase(selectedTask.getTitle()))
                         .toList();
                 dataStore.getAllReminders().removeAll(remindersToRemove);
                 dataStore.saveAllData();
 
-                // Inform the user
                 if (!remindersToRemove.isEmpty()) {
                     showAlert(Alert.AlertType.INFORMATION, "Reminders Removed",
                             "All reminders associated with this task have been removed as the task is now completed.");
                 }
             }
 
-            // Update task attributes
             selectedTask.setTitle(title);
             selectedTask.setDescription(description);
             selectedTask.setCategory(category);
@@ -389,10 +377,8 @@ public class TaskController {
 
             dataStore.saveAllData();
 
-            // Refresh task list
-             taskView.refreshTaskList(dataStore.getAllTasks());
+            taskView.refreshTaskList(dataStore.getAllTasks());
 
-            // Update main statistics
             MainController.getInstance().updateStatistics();
 
             dialog.close();
@@ -405,9 +391,12 @@ public class TaskController {
         dialog.showAndWait();
     }
 
-    // Method to delete selected task
+    /**
+     * Deletes the selected task after user confirmation. Also removes all
+     * associated reminders and updates the main statistics.
+     */
     private void deleteSelectedTask() {
-        Task selectedTask =  taskView.getTaskListView().getSelectionModel().getSelectedItem();
+        Task selectedTask = taskView.getTaskListView().getSelectionModel().getSelectedItem();
         if (selectedTask == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a task to delete.");
             return;
@@ -420,6 +409,7 @@ public class TaskController {
 
         Optional<ButtonType> result = confirmation.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
+
             // Remove the task
             dataStore.getAllTasks().remove(selectedTask);
 
@@ -433,12 +423,12 @@ public class TaskController {
             dataStore.saveAllData();
 
             // Refresh task and reminder lists
-             taskView.refreshTaskList(dataStore.getAllTasks());
+            taskView.refreshTaskList(dataStore.getAllTasks());
 
             // Update main statistics
             MainController.getInstance().updateStatistics();
 
-            // Optionally, inform the user about the removal of associated reminders
+            // Inform the user about the removal of associated reminders
             if (!remindersToRemove.isEmpty()) {
                 showAlert(Alert.AlertType.INFORMATION, "Reminders Removed",
                         "All reminders associated with the deleted task have been removed.");
@@ -446,9 +436,12 @@ public class TaskController {
         }
     }
 
-    // Method to view selected task details
+    /**
+     * Opens a dialog to view details of the selected task in a read-only form.
+     * If no task is selected, an alert is displayed.
+     */
     private void viewSelectedTaskDetails() {
-        Task selectedTask =  taskView.getTaskListView().getSelectionModel().getSelectedItem();
+        Task selectedTask = taskView.getTaskListView().getSelectionModel().getSelectedItem();
         if (selectedTask == null) {
             showAlert(Alert.AlertType.WARNING, "No Selection", "Please select a task to view.");
             return;
@@ -457,16 +450,16 @@ public class TaskController {
         Stage dialog = new Stage();
         dialog.setTitle("Task Details");
         dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.initOwner( taskView.getStage());
-        dialog.setResizable(true); // Make dialog resizable
+        dialog.initOwner(taskView.getStage());
+        dialog.setResizable(true);
 
         GridPane grid = createTaskFormGrid();
 
         // Define column constraints
         ColumnConstraints col1 = new ColumnConstraints();
-        col1.setPercentWidth(30); // Labels take 30% width
+        col1.setPercentWidth(30);
         ColumnConstraints col2 = new ColumnConstraints();
-        col2.setPercentWidth(70); // Fields take 70% width
+        col2.setPercentWidth(70);
         grid.getColumnConstraints().addAll(col1, col2);
 
         // Display Fields (Read-Only)
@@ -480,9 +473,9 @@ public class TaskController {
         TextArea descriptionArea = new TextArea(selectedTask.getDescription());
         descriptionArea.setEditable(false);
         descriptionArea.setWrapText(true);
-        descriptionArea.setPrefHeight(100); // Set preferred height
+        descriptionArea.setPrefHeight(100);
 
-        // Add components to grid with proper alignment
+        // Add components to grid
         grid.add(new Label("Title:"), 0, 0);
         grid.add(titleLabel, 1, 0);
 
@@ -505,25 +498,35 @@ public class TaskController {
         Button closeBtn = new Button("Close");
         closeBtn.setOnAction(e -> dialog.close());
         HBox buttonBox = new HBox(closeBtn);
-        buttonBox.setPadding(new Insets(20, 0, 0, 0)); // Increased top padding
-        buttonBox.setAlignment(Pos.CENTER_RIGHT); // Align button to the right
+        buttonBox.setPadding(new Insets(20, 0, 0, 0));
+        buttonBox.setAlignment(Pos.CENTER_RIGHT);
         grid.add(buttonBox, 1, 6);
 
-        Scene scene = new Scene(grid, 500, 500); // Increased dialog size
+        Scene scene = new Scene(grid, 500, 500);
         dialog.setScene(scene);
         dialog.showAndWait();
     }
 
-    // Helper method to create a GridPane for forms
+    /**
+     * Creates a GridPane with predefined padding and spacing for forms.
+     * 
+     * @return A new GridPane instance.
+     */
     private GridPane createTaskFormGrid() {
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(20));
-        grid.setVgap(15); // Increased vertical gap
+        grid.setVgap(15);
         grid.setHgap(10);
         return grid;
     }
 
-    // Helper method to show alerts
+    /**
+     * Displays an alert dialog with the specified type, title, and message.
+     * 
+     * @param alertType The type of alert (e.g., ERROR, WARNING, INFORMATION).
+     * @param title     The title of the alert dialog.
+     * @param message   The message content of the alert.
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message) {
         Platform.runLater(() -> {
             Alert alert = new Alert(alertType);
