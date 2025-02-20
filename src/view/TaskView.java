@@ -10,6 +10,15 @@ import model.Task;
 
 import java.util.List;
 
+/**
+ * A JavaFX view for managing tasks in the application.
+ * <p>
+ * Displays a list of tasks along with search filters (title, category,
+ * priority),
+ * and provides buttons to add, edit, delete, or view detailed information about
+ * a task.
+ * Typically used with {@link controllers.TaskController}.
+ */
 public class TaskView {
 
     private Stage stage;
@@ -27,6 +36,16 @@ public class TaskView {
     private ComboBox<String> prioritySearchBox;
     private Button searchBtn;
 
+    /**
+     * Constructs a new TaskView for task management. Initializes search panels,
+     * a list view of tasks, and action buttons.
+     *
+     * @param owner      The parent {@link Stage} (usually the main application
+     *                   window).
+     * @param tasks      The initial list of tasks to display.
+     * @param categories The list of category names for filtering.
+     * @param priorities The list of priority names for filtering.
+     */
     public TaskView(Stage owner, List<Task> tasks, List<String> categories, List<String> priorities) {
         stage = new Stage();
         stage.setTitle("Task Management");
@@ -41,6 +60,15 @@ public class TaskView {
         stage.setScene(scene);
     }
 
+    /**
+     * Sets up the layout for viewing and searching tasks, including:
+     * a header, search panel (title, category, priority), task list, and action
+     * buttons.
+     *
+     * @param tasks      The initial list of tasks to display in the list view.
+     * @param categories The list of categories for the search filter.
+     * @param priorities The list of priorities for the search filter.
+     */
     private void initializeUI(List<Task> tasks, List<String> categories, List<String> priorities) {
         // Top: Header
         Label headerLabel = new Label("Manage Tasks");
@@ -90,7 +118,9 @@ public class TaskView {
                 if (empty || task == null) {
                     setText(null);
                 } else {
-                    setText(task.getTitle() + " | " + task.getCategory() + " | " + task.getPriority() + " | " + task.getDeadline());
+                    // Show some key info in a single line
+                    setText(task.getTitle() + " | " + task.getCategory() + " | " + task.getPriority() + " | "
+                            + task.getDeadline());
                 }
             }
         });
@@ -108,48 +138,101 @@ public class TaskView {
         root.setBottom(buttonBox);
     }
 
-    // Getters for UI Components
+    /**
+     * Returns the {@link Stage} for this view.
+     *
+     * @return The JavaFX Stage used for Task Management.
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Retrieves the list view that displays the tasks.
+     *
+     * @return A {@link ListView} of {@link Task} objects.
+     */
     public ListView<Task> getTaskListView() {
         return taskListView;
     }
 
+    /**
+     * Returns the button for adding a new task.
+     *
+     * @return The 'Add Task' {@link Button}.
+     */
     public Button getAddTaskBtn() {
         return addTaskBtn;
     }
 
+    /**
+     * Returns the button for editing the selected task.
+     *
+     * @return The 'Edit Task' {@link Button}.
+     */
     public Button getEditTaskBtn() {
         return editTaskBtn;
     }
 
+    /**
+     * Returns the button for deleting the selected task.
+     *
+     * @return The 'Delete Task' {@link Button}.
+     */
     public Button getDeleteTaskBtn() {
         return deleteTaskBtn;
     }
 
+    /**
+     * Returns the button for viewing more details about the selected task.
+     *
+     * @return The 'View Details' {@link Button}.
+     */
     public Button getViewTaskBtn() {
         return viewTaskBtn;
     }
 
+    /**
+     * Retrieves the text field used for searching tasks by title.
+     *
+     * @return A {@link TextField} for entering a title search query.
+     */
     public TextField getTitleSearchField() {
         return titleSearchField;
     }
 
+    /**
+     * Retrieves the combo box for filtering tasks by category.
+     *
+     * @return A {@link ComboBox} of category strings.
+     */
     public ComboBox<String> getCategorySearchBox() {
         return categorySearchBox;
     }
 
+    /**
+     * Retrieves the combo box for filtering tasks by priority.
+     *
+     * @return A {@link ComboBox} of priority strings.
+     */
     public ComboBox<String> getPrioritySearchBox() {
         return prioritySearchBox;
     }
 
+    /**
+     * Returns the button used to trigger the search operation.
+     *
+     * @return The 'Search' {@link Button}.
+     */
     public Button getSearchBtn() {
         return searchBtn;
     }
 
-    // Method to refresh the task list
+    /**
+     * Clears the current list of tasks and repopulates it with the specified list.
+     *
+     * @param tasks The new list of tasks to display.
+     */
     public void refreshTaskList(List<Task> tasks) {
         taskListView.getItems().clear();
         taskListView.getItems().addAll(tasks);

@@ -10,6 +10,13 @@ import controllers.PriorityController;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 
+/**
+ * The primary JavaFX view for the MediaLab Assistant application.
+ * <p>
+ * Displays high-level statistics (total tasks, completed tasks,
+ * delayed tasks, upcoming tasks) and provides buttons for
+ * navigating to Task, Category, Priority, and Reminder Management.
+ */
 public class MainView {
 
     private BorderPane root;
@@ -24,10 +31,16 @@ public class MainView {
 
     // Management Buttons
     private Button taskManagementBtn;
-    private Button categoryManagementBtn; // New Button
+    private Button categoryManagementBtn;
     private Button priorityManagementBtn;
     private Button reminderManagementBtn;
 
+    /**
+     * Constructs the main application view with labeled statistics
+     * and navigation buttons to different management windows.
+     *
+     * @param stage The JavaFX {@link Stage} on which this view is displayed.
+     */
     public MainView(Stage stage) {
         this.stage = stage; // Assign the passed Stage to the class variable
         root = new BorderPane();
@@ -78,19 +91,19 @@ public class MainView {
 
         // Set Button Sizes
         taskManagementBtn.setPrefSize(150, 50);
-        categoryManagementBtn.setPrefSize(150, 50); // Set size
+        categoryManagementBtn.setPrefSize(150, 50);
         priorityManagementBtn.setPrefSize(150, 50);
         reminderManagementBtn.setPrefSize(150, 50);
 
         // Create Cells with Buttons
         VBox cell5 = createButtonCell(taskManagementBtn);
-        VBox cell6 = createButtonCell(categoryManagementBtn); // Add new button
+        VBox cell6 = createButtonCell(categoryManagementBtn);
         VBox cell7 = createButtonCell(priorityManagementBtn);
         VBox cell8 = createButtonCell(reminderManagementBtn);
 
         // Add Cells to GridPane (Bottom Row)
         centralGrid.add(cell5, 0, 1);
-        centralGrid.add(cell6, 1, 1); // Add new button to grid
+        centralGrid.add(cell6, 1, 1);
         centralGrid.add(cell7, 2, 1);
         centralGrid.add(cell8, 3, 1);
 
@@ -111,7 +124,13 @@ public class MainView {
         stage.show();
     }
 
-    // Helper method to create a statistics cell
+    /**
+     * Creates a styled cell {@link VBox} that displays a statistics label.
+     *
+     * @param label The {@link Label} containing statistic text (e.g. 'Total Tasks:
+     *              0').
+     * @return A styled VBox containing the provided label.
+     */
     private VBox createStatCell(Label label) {
         VBox cell = new VBox(label);
         cell.setAlignment(Pos.CENTER);
@@ -120,7 +139,13 @@ public class MainView {
         return cell;
     }
 
-    // Helper method to create a button cell
+    /**
+     * Creates a styled cell {@link VBox} that displays a button
+     * for navigation to a specific management window.
+     *
+     * @param button The {@link Button} to include in this cell.
+     * @return A styled VBox containing the provided button.
+     */
     private VBox createButtonCell(Button button) {
         VBox cell = new VBox(button);
         cell.setAlignment(Pos.CENTER);
@@ -129,40 +154,83 @@ public class MainView {
         return cell;
     }
 
-    // Getters for Labels and Buttons to allow controller access
+    /**
+     * Gets the {@link Label} for displaying total task count.
+     *
+     * @return A {@link Label} showing total tasks.
+     */
     public Label getTotalTasksLabel() {
         return totalTasksLabel;
     }
 
+    /**
+     * Gets the {@link Label} for displaying completed task count.
+     *
+     * @return A {@link Label} showing completed tasks.
+     */
     public Label getCompletedTasksLabel() {
         return completedTasksLabel;
     }
 
+    /**
+     * Gets the {@link Label} for displaying delayed task count.
+     *
+     * @return A {@link Label} showing delayed tasks.
+     */
     public Label getDelayedTasksLabel() {
         return delayedTasksLabel;
     }
 
+    /**
+     * Gets the {@link Label} for displaying upcoming task count.
+     *
+     * @return A {@link Label} showing tasks due in 7 days.
+     */
     public Label getUpcomingTasksLabel() {
         return upcomingTasksLabel;
     }
 
+    /**
+     * Gets the {@link Button} used to open Task Management.
+     *
+     * @return The 'Task Management' button.
+     */
     public Button getTaskManagementBtn() {
         return taskManagementBtn;
     }
 
+    /**
+     * Gets the {@link Button} used to open Category Management.
+     *
+     * @return The 'Category Management' button.
+     */
     public Button getCategoryManagementBtn() {
         return categoryManagementBtn;
     }
 
+    /**
+     * Gets the {@link Button} used to open Priority Management.
+     *
+     * @return The 'Priority Management' button.
+     */
     public Button getPriorityManagementBtn() {
         return priorityManagementBtn;
     }
 
+    /**
+     * Gets the {@link Button} used to open Reminder Management.
+     *
+     * @return The 'Reminder Management' button.
+     */
     public Button getReminderManagementBtn() {
         return reminderManagementBtn;
     }
 
-    // **New Getter Method for Stage**
+    /**
+     * Returns the primary {@link Stage} associated with this view.
+     *
+     * @return The main stage for the application.
+     */
     public Stage getStage() {
         return stage;
     }

@@ -11,6 +11,13 @@ import model.Reminder;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * A JavaFX view for displaying and managing reminders.
+ * <p>
+ * Lists existing reminders (each tied to a task title and a date)
+ * and provides buttons to add, edit, or delete reminders.
+ * Typically controlled by the {@link controllers.ReminderController}.
+ */
 public class ReminderView {
 
     private Stage stage;
@@ -23,6 +30,12 @@ public class ReminderView {
     private Button editReminderBtn;
     private Button deleteReminderBtn;
 
+    /**
+     * Constructs a new ReminderView window.
+     *
+     * @param owner     The parent {@link Stage}, typically the main application window.
+     * @param reminders The initial list of reminders to display.
+     */
     public ReminderView(Stage owner, List<Reminder> reminders) {
         stage = new Stage();
         stage.setTitle("Reminder Management");
@@ -30,7 +43,7 @@ public class ReminderView {
         stage.setResizable(true);
 
         root = new BorderPane();
-        scene = new Scene(root, 400, 300); // Initial size
+        scene = new Scene(root, 400, 300);
 
         // Initialize UI Components
         initializeUI(reminders);
@@ -38,6 +51,12 @@ public class ReminderView {
         stage.setScene(scene);
     }
 
+    /**
+     * Initializes the UI components, including a header, a list view
+     * for reminders, and action buttons for adding, editing, and deleting.
+     *
+     * @param reminders The list of reminders to display initially.
+     */
     private void initializeUI(List<Reminder> reminders) {
         // Top: Header
         Label headerLabel = new Label("Manage Reminders");
@@ -80,28 +99,56 @@ public class ReminderView {
         root.setBottom(buttonBox);
     }
 
-    // Getters for UI Components
+    /**
+     * Returns the {@link Stage} used by this view.
+     *
+     * @return The JavaFX Stage for the reminder management window.
+     */
     public Stage getStage() {
         return stage;
     }
 
+    /**
+     * Returns the list view that displays current reminders.
+     *
+     * @return A {@link ListView} of {@link Reminder} objects.
+     */
     public ListView<Reminder> getReminderListView() {
         return reminderListView;
     }
 
+    /**
+     * Returns the button used to add a new reminder.
+     *
+     * @return The 'Add' {@link Button}.
+     */
     public Button getAddReminderBtn() {
         return addReminderBtn;
     }
 
+    /**
+     * Returns the button used to edit the selected reminder.
+     *
+     * @return The 'Edit' {@link Button}.
+     */
     public Button getEditReminderBtn() {
         return editReminderBtn;
     }
 
+    /**
+     * Returns the button used to delete the selected reminder.
+     *
+     * @return The 'Delete' {@link Button}.
+     */
     public Button getDeleteReminderBtn() {
         return deleteReminderBtn;
     }
 
-    // Method to refresh the reminder list
+    /**
+     * Clears and repopulates the list of reminders in the list view.
+     *
+     * @param reminders The updated list of reminders to display.
+     */
     public void refreshReminderList(List<Reminder> reminders) {
         reminderListView.getItems().clear();
         reminderListView.getItems().addAll(reminders);
