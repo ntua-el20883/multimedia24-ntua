@@ -5,7 +5,7 @@
 ## Project's Description
 
 > This is the English translation of the project's description.  
-> To view the original description, in Greek, please refer to the document [here](documentation/GREEK_description_v1.pdf).
+> To view the original description, in Greek, please refer to the document [here](/GREEK_description_v1.pdf).
 
 In the context of the project a Task Management System will be implemented. The application will allow the user to create, edit, and monitor the available tasks. In addition, the user will be able to manage multiple tasks, set priorities and deadlines, and receive reminders for upcoming tasks.
 
@@ -53,7 +53,7 @@ Next we describe the logic that must be implemented to retrieve and refresh the 
 - **Application termination**: Updating JSON files with system state information will be done exclusively before application termination. The implementation shall store in the corresponding JSON files the overall state of the application at the time of termination.
 
 ### **A.3. Creation of a graphical interface (30%)**
-You shall design and implement the appropriate Graphical User Interface (GUI) using the JavaFX framework [1][2].  
+You shall design and implement the appropriate Graphical User Interface (GUI) using the JavaFX framework [1](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.html),[2](https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.html).  
 *Note*: The basic specifications for the GUI are presented below, for all the details of the final implementation you can make any choices you wish regarding the appearance and general user interaction with the application, without any impact on the final score. For example, you can choose a simple visualization for the various elements or combine various features from JavaFX to create an effect that corresponds to a modern application. In any case, there is no need to make this part of the task complicated.
 
 - Initially when starting the application if there are tasks that are in "Delayed" state the user should be informed with an appropriate popup window about the number of overdue tasks.
@@ -80,7 +80,7 @@ Finally, your GUI implementation should ensure that when the application is term
 ### **A.4. Other requirements (20%)**
 The implementation should follow the object-oriented programming (OOP) design principles.
 
-In a class of your choice, each public method it contains must be documented according to the javadoc tool specification [3].
+In a class of your choice, each public method it contains must be documented according to the javadoc tool specification [3](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html).
 
 *Note*: For anything that is not clear from the pronunciation you can make your own assumptions and assumptions. The pronunciation outlines the basic requirements for the implementation, however you can make your own design assumptions trying to make the implementation more realistic without making the implementation complex.
 
@@ -93,8 +93,8 @@ In a class of your choice, each public method it contains must be documented acc
 
 ### References
 
-[1] [https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.htm](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.htm)  
-[2] [https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm](https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)  
+[1] [https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.html](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.htm)  
+[2] [https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.html](https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.htm)  
 [3] [https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html)
 
 ---
@@ -102,4 +102,87 @@ In a class of your choice, each public method it contains must be documented acc
 ## Project's Report
 
 > This is the English translation of the project's report.  
-> To view the original description, in Greek, please refer to the document [here](documentation/GREEK_report.pdf).
+> To view the original description, in Greek, please refer to the document [here](multimedia24-ntua/documentation/GREEK_report.pdf).
+
+---
+
+### Multimedia Technology
+**Semester Work Report**  
+Ioannis Tsantilas, 03120883  
+**Repository & Setup**
+
+The project implementation includes specific `.jar` files, which are too large to be pushed to the repository. For this reason, I have created a README file in which I give instructions on how to setup the project [here](multimedia24-ntua/README.md).
+
+---
+
+### Database
+My database consists of four `.json` files at `multimedia24-ntua/multimedia/`. Specifically, these files are:
+- **categories.json**: takes care of storing the categories. The categories have the following fields: `name`.
+- **priorities.json**: takes care of storing the priorities. The priorities have the following fields: `name`.
+- **reminders.json**: takes care of storing the reminders. Reminders have the following fields: `taskTitle`, `date`.
+- **tasks.json**: takes care of storing the tasks. Tasks have the following fields: `title`, `description`, `category`, `priority`, `deadline`, `status`.
+
+---
+
+### Structure - Assumptions
+The project structure is characterized by four corresponding entities: **task**, **category**, **priority** and **reminder**.
+
+#### Task
+- The mandatory information that a user must provide for a task is its **title** and its **deadline**.
+- The title of each task should be unique (not case-sensitive).
+- The deadline cannot be a past date.
+- In case the deadline is not given:
+  - **Description** will be left blank.
+  - **Category** will be set to its default value, `Default`.
+  - **Priority** will be set to its default value, `Default`.
+  - **Status** will be set to its default value, `Open`.
+    - Unlike category and priority, the user cannot edit statuses. They can only choose from the available ones: `Open`, `In Progress`, `Completed`, `Delayed`, `Postponed`.
+    - So, in case the user sets a `Delayed` status on a task due in 7 days, this task will be counted in both "Delayed Tasks" and "Tasks due in 7 days".
+
+#### Category & Priority
+- The mandatory information a user must provide for a **Category/Priority** is their **name**.
+- The name of each Category/Priority should be unique (not case-sensitive).
+- The user cannot delete or edit the default Category/Priority, `Default`.
+- If at application launch the default Category/Priority does not exist in `categories.json`/`priorities.json`, the application automatically creates it.
+
+#### Reminder
+- The mandatory information a user must provide for a **Reminder** is the **task** (`taskTitle`) and the **date** (`date`).
+- Because the reminder is set at the day level (not the time level), for the same task there cannot be multiple reminders on the same day.
+- The date of the reminder cannot be before the current date, nor after the deadline of the selected task.
+  - This means that if the user selects a predefined option (e.g. "one week before the deadline") and it falls before the current date, an error window will appear.
+  - Of course, the same will happen if the user selects any date and it falls outside the allowed limits.
+- If the user changes the deadline of a task for which a reminder is dated after the new deadline, the application will notify the user that if they proceed, that reminder will be deleted.
+  - For example, a task with a deadline of `3/20/25` and a reminder of `3/15/25` – if the user changes the deadline to `10/03/25`, the reminder will be deleted since it is out of bounds.
+- If the user changes the deadline of a task for which a reminder is dated before the new deadline and the user has selected it through the predefined options, the application will automatically update the date.
+  - For example, a task with a deadline of `20/03/25` and a reminder of `13/03/25` (via the "1 week before" option) – if the user changes the deadline to `19/03/25`, the reminder will change to `12/03/25`.
+- There is a sub-case in this rule: if the deadline is set with a default option, there is a chance that the new reminder date will be in the past. In this case, the user is notified with a corresponding window and encouraged to check his/her reminders.
+  - For example, if today is `10/02/25`, a task with a deadline of `20/03/25` and a reminder of `20/02/25` (via the "1 month before" option) – if the user changes the deadline to `09/03/25`, then the reminder will change to `09/02/25`, which is in the past. This reminder will remain, and the user will be prompted to check their reminders.
+
+---
+
+### Implementation
+The implementation followed the rules of object-oriented programming, separating functionality into distinct classes, each of which incorporates its own data and behavior.
+
+As shown in the code structure within `/multimedia24-ntua/src/`, the implementation follows the MVC model:
+- **Model classes** (such as `Task`, `Category`, `Priority`, and `Reminder`) wrap attributes with private fields and expose functionality via getters and setters, ensuring data integrity and encapsulation.
+- **Controllers** (such as `TaskController` and `CategoryController`) manage business logic and coordinate user actions without exposing internal implementations, which reinforces the Single Responsibility Principle. In addition, they implement input validation and update routines (e.g. checking for duplicate tasks or updating reminder status).
+- The use of **JavaFX** for the view part (with classes such as `TaskView` and `MainView`) demonstrates how the user interface is kept distinct from the underlying data logic.
+- Additionally, the `DataStore` class implements the Singleton pattern, ensuring that all parts of the application have access to a single, consistent data source.  
+  Polymorphism is exploited through the dynamic behavior of UI elements (for example, cells that override the `updateItem` method), and abstraction is evident in methods such as `loadAllData()` and `saveAllData()`, which hide the complexity of JSON serialization using Jackson.
+
+The retrieval and refreshing of the application data was done according to the provided instructions. At application initialization, appropriate checks are made (e.g. to inform the user if there are Delayed tasks, if the default category and priority exist, if there are tasks with a past deadline, etc.), and with each new change the database is refreshed as soon as the user clicks "Save" (e.g. when creating a new task, deleting a category, or editing a priority).
+
+---
+
+### Javadoc Documentation
+
+All classes within ```/multimedia24-ntua/src/``` were described in Javadoc. However, I recommend the [MainController.java](src/controllers/MainController.java) as it has more public classes.
+
+To see all the classes in detail, you can open the [index.html](docs/index.html) file in your favorite browser.
+
+In case there is a problem with the file, run the following command at ```/multimedia24-ntua/src/```:
+   ```
+   Javadoc -d ../docs -sourcepath . -subpackages controllers:model:view:storage -classpath "..\lib\javafx-sdk-23.0.1\lib\*;. \lib\jackson-annotations-2.18.1.jar;..\lib\jackson-core-2.18.1.jar;..\lib\jackson-databind-2.18.1.jar;..\lib\jackson-datatype-jsr310-2.18.1.jar"
+   ```
+
+---
