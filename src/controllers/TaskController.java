@@ -95,8 +95,12 @@ public class TaskController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField titleField = new TextField();
+        
         TextArea descriptionArea = new TextArea();
-        descriptionArea.setPrefRowCount(3);
+        descriptionArea.setPrefRowCount(5);
+        descriptionArea.setWrapText(true); 
+        descriptionArea.setPrefHeight(100);
+
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> priorityComboBox = new ComboBox<>();
         DatePicker deadlinePicker = new DatePicker();
@@ -247,8 +251,12 @@ public class TaskController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField titleField = new TextField(selectedTask.getTitle());
+        
         TextArea descriptionArea = new TextArea(selectedTask.getDescription());
-        descriptionArea.setPrefRowCount(3);
+        descriptionArea.setPrefRowCount(5);
+        descriptionArea.setWrapText(true); 
+        descriptionArea.setPrefHeight(100);
+
         ComboBox<String> categoryComboBox = new ComboBox<>();
         ComboBox<String> priorityComboBox = new ComboBox<>();
         DatePicker deadlinePicker = new DatePicker(selectedTask.getDeadline());
@@ -584,6 +592,7 @@ public class TaskController {
         TextArea descriptionArea = new TextArea(selectedTask.getDescription());
         descriptionArea.setEditable(false);
         descriptionArea.setWrapText(true);
+        descriptionArea.setPrefRowCount(5); 
         descriptionArea.setPrefHeight(100);
 
         // Add components to grid
