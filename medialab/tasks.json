@@ -34,17 +34,10 @@
   "deadline" : "2025-02-27",
   "status" : "Postponed"
 }, {
-  "title" : "Delayed Task for Pop-up",
-  "description" : "Don't delete this. If you have run the app then the Status of this task should be Delayed. Close the app, go to /multimedia/tasks.json and change the status to Open for the warning to pop-up again in the launch.",
+  "title" : "Open-to-Delayed Task",
+  "description" : "Don't delete this. This is an Open Task with past Deadline, so the system should automatically have changed its status to Delayed. If you have run the app then the Status of this task should be Delayed. Close the app, go to /multimedia/tasks.json and change the status to Open.",
   "category" : "Optional",
   "priority" : "Low",
   "deadline" : "2023-01-27",
-  "status" : "Delayed"
-}, {
-  "title" : "ξηγξη",
-  "description" : "",
-  "category" : "Default",
-  "priority" : "Default",
-  "deadline" : "2025-02-28",
   "status" : "Delayed"
 } ]
