@@ -159,8 +159,9 @@ public class TaskController {
             LocalDate deadline = deadlinePicker.getValue();
             String status = statusComboBox.getValue();
 
-            if (title.isEmpty() || description.isEmpty() || deadline == null) {
-                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
+            if (title.isEmpty() || deadline == null) {
+                showAlert(Alert.AlertType.ERROR, "Form Error!",
+                        "Please fill in all mandatory fields: Title, Deadline.");
                 return;
             }
 
@@ -313,9 +314,9 @@ public class TaskController {
             LocalDate deadline = deadlinePicker.getValue();
             String status = statusComboBox.getValue();
 
-            if (title.isEmpty() || description.isEmpty() || category == null || priority == null || deadline == null
-                    || status == null) {
-                showAlert(Alert.AlertType.ERROR, "Form Error!", "Please fill in all fields.");
+            if (title.isEmpty() || deadline == null) {
+                showAlert(Alert.AlertType.ERROR, "Form Error!",
+                        "Please fill in all mandatory fields: Title, Deadline.");
                 return;
             }
 
@@ -355,6 +356,7 @@ public class TaskController {
                 status = "Open";
             }
 
+            // If task is marked Completed, remove its associated reminders
             if (status.equalsIgnoreCase("Completed")) {
                 List<Reminder> remindersToRemove = dataStore.getAllReminders().stream()
                         .filter(reminder -> reminder.getTaskTitle().equalsIgnoreCase(selectedTask.getTitle()))
@@ -367,6 +369,115 @@ public class TaskController {
                             "All reminders associated with this task have been removed as the task is now completed.");
                 }
             }
+
+            // --- New Reminder Handling for Deadline Changes ---
+
+            // Capture the old deadline before updating the task
+            LocalDate oldDeadline = selectedTask.getDeadline();
+
+            // Get all reminders for this task
+            List<Reminder> remindersForTask = dataStore.getAllReminders().stream()
+                    .filter(reminder -> reminder.getTaskTitle().equalsIgnoreCase(selectedTask.getTitle()))
+                    .toList();
+
+            // Lists for relative reminders and those that become past after recalculation
+            List<Reminder> relativeReminders = new java.util.ArrayList<>();
+            List<Reminder> remindersThatBecomePast = new java.util.ArrayList<>();
+            List<Reminder> remindersToRemove = new java.util.ArrayList<>();
+
+            for (Reminder reminder : remindersForTask) {
+                LocalDate oldReminderDate = reminder.getDate();
+                // Determine if the reminder is set relative to the old deadline
+                if (oldReminderDate.equals(oldDeadline.minusDays(1)) ||
+                        oldReminderDate.equals(oldDeadline.minusWeeks(1)) ||
+                        oldReminderDate.equals(oldDeadline.minusMonths(1))) {
+                    relativeReminders.add(reminder);
+                } else {
+                    // For absolute-date reminders, if they now fall after deadline, mark for
+                    // removal
+                    if (oldReminderDate.isAfter(deadline)) {
+                        remindersToRemove.add(reminder);
+                    }
+                }
+            }
+
+            // Recalculate new dates for relative reminders
+            for (Reminder reminder : relativeReminders) {
+                LocalDate newReminderDate = null;
+                if (reminder.getDate().equals(oldDeadline.minusDays(1))) {
+                    newReminderDate = deadline.minusDays(1);
+                } else if (reminder.getDate().equals(oldDeadline.minusWeeks(1))) {
+                    newReminderDate = deadline.minusWeeks(1);
+                } else if (reminder.getDate().equals(oldDeadline.minusMonths(1))) {
+                    newReminderDate = deadline.minusMonths(1);
+                }
+                if (newReminderDate != null) {
+                    // If recalculated date is after deadline, mark for removal
+                    if (newReminderDate.isAfter(deadline)) {
+                        remindersToRemove.add(reminder);
+                    }
+                    // If recalculated date is before today, add to the warning list
+                    else if (newReminderDate.isBefore(LocalDate.now())) {
+                        remindersThatBecomePast.add(reminder);
+                    } else {
+                        // Otherwise, update the reminder with the new date
+                        reminder.setDate(newReminderDate);
+                    }
+                }
+            }
+
+            // If any relative reminders are recalculated to a past date, warn the user
+            if (!remindersThatBecomePast.isEmpty()) {
+                Alert pastAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                pastAlert.setTitle("Warning: Reminders in the Past");
+                pastAlert.setHeaderText("Some relative reminders will be set to a past date.");
+                pastAlert.setContentText("These reminders will be recalculated and may now be in the past. " +
+                        "Please check them manually. Do you want to proceed?");
+                ButtonType proceedBtn = new ButtonType("Proceed", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancelType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                pastAlert.getButtonTypes().setAll(proceedBtn, cancelType);
+                Optional<ButtonType> pastResult = pastAlert.showAndWait();
+                if (pastResult.isEmpty() || pastResult.get() == cancelType) {
+                    // User canceled the operation
+                    return;
+                } else {
+                    // For those reminders, update them even if they are in the past.
+                    for (Reminder reminder : remindersThatBecomePast) {
+                        if (reminder.getDate().equals(oldDeadline.minusDays(1))) {
+                            reminder.setDate(deadline.minusDays(1));
+                        } else if (reminder.getDate().equals(oldDeadline.minusWeeks(1))) {
+                            reminder.setDate(deadline.minusWeeks(1));
+                        } else if (reminder.getDate().equals(oldDeadline.minusMonths(1))) {
+                            reminder.setDate(deadline.minusMonths(1));
+                        }
+                    }
+                }
+            }
+
+            // If any absolute reminders (or relative ones that couldn't be recalculated
+            // properly)
+            // are invalid (i.e., fall after deadline), prompt for confirmation and
+            // remove them.
+            if (!remindersToRemove.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setTitle("Reminders No Longer Valid");
+                alert.setHeaderText(null);
+                alert.setContentText("Some reminders occur after the new deadline (" + deadline + ").\n" +
+                        "They will be removed if you continue.\n\nDo you want to proceed?");
+                ButtonType proceedBtn = new ButtonType("Proceed", ButtonBar.ButtonData.OK_DONE);
+                ButtonType cancelType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(proceedBtn, cancelType);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.isEmpty() || result.get() == cancelType) {
+                    // Abort the update if the user cancels
+                    return;
+                } else {
+                    dataStore.getAllReminders().removeAll(remindersToRemove);
+                    dataStore.saveAllData();
+                }
+            }
+
+            // --- End Reminder Handling ---
 
             selectedTask.setTitle(title);
             selectedTask.setDescription(description);

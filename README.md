@@ -36,8 +36,8 @@ Follow these steps to set up your environment successfully.
 
 > **Important:**  
 > JavaFX and Jackson encounter issues when stored in paths with white spaces or non-English characters.  
-> To avoid this, these dependencies are placed in the project directory:  
-> `C:\Users\juant\Documents\coding\task-mng-system\lib`  
+> To avoid this, these dependencies are placed in the project directory. For example, mine was:  
+> `C:\Users\juant\Documents\Java_Projects\multimedia24-ntua\lib`  
 > Ensure the path to `lib` has no spaces and uses only English characters.
 
 1. **Download JavaFX SDK**  
@@ -58,7 +58,7 @@ Follow these steps to set up your environment successfully.
      ```
    - Move `javafx-sdk-23.0.1` to the project directory:  
      ```
-     C:\Users\juant\Documents\coding\task-mng-system\lib
+     C:\path\to\multimedia24-ntua\lib
      ```
 
 ---
@@ -78,7 +78,7 @@ Follow these steps to set up your environment successfully.
 2. **Place Files in the `lib` Directory**  
    After downloading, move the `.jar` files to:  
      ```
-     C:\Users\juant\Documents\coding\task-mng-system\lib
+     C:\path\to\multimedia24-ntua\lib
      ```
 
 ---

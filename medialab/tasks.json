@@ -35,7 +35,7 @@
   "status" : "Postponed"
 }, {
   "title" : "Delayed Task for Pop-up",
-  "description" : "Don't delete this.",
+  "description" : "Don't delete this. If you have run the app then the Status of this task should be Delayed. Close the app, go to /multimedia/tasks.json and change the status to Open for the warning to pop-up again in the launch.",
   "category" : "Optional",
   "priority" : "Low",
   "deadline" : "2023-01-27",
