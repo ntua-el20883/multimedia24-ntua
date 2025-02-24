@@ -5,7 +5,7 @@
 ## Project's Description
 
 > This is the English translation of the project's description.  
-> To view the original description, in Greek, please refer to the document [here](/GREEK_description_v1.pdf).
+> To view the original description, in Greek, please refer to the document [here](GREEK_description_v1.pdf).
 
 In the context of the project a Task Management System will be implemented. The application will allow the user to create, edit, and monitor the available tasks. In addition, the user will be able to manage multiple tasks, set priorities and deadlines, and receive reminders for upcoming tasks.
 
@@ -53,7 +53,7 @@ Next we describe the logic that must be implemented to retrieve and refresh the 
 - **Application termination**: Updating JSON files with system state information will be done exclusively before application termination. The implementation shall store in the corresponding JSON files the overall state of the application at the time of termination.
 
 ### **A.3. Creation of a graphical interface (30%)**
-You shall design and implement the appropriate Graphical User Interface (GUI) using the JavaFX framework [1](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.html),[2](https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.html).  
+You shall design and implement the appropriate Graphical User Interface (GUI) using the JavaFX framework [[1]](https://docs.oracle.com/javase/8/javafx/get-started-tutorial/jfx-overview.html), [[2]](https://docs.oracle.com/javafx/2/get_started/jfxpub-get_started.html).  
 *Note*: The basic specifications for the GUI are presented below, for all the details of the final implementation you can make any choices you wish regarding the appearance and general user interaction with the application, without any impact on the final score. For example, you can choose a simple visualization for the various elements or combine various features from JavaFX to create an effect that corresponds to a modern application. In any case, there is no need to make this part of the task complicated.
 
 - Initially when starting the application if there are tasks that are in "Delayed" state the user should be informed with an appropriate popup window about the number of overdue tasks.
@@ -80,7 +80,7 @@ Finally, your GUI implementation should ensure that when the application is term
 ### **A.4. Other requirements (20%)**
 The implementation should follow the object-oriented programming (OOP) design principles.
 
-In a class of your choice, each public method it contains must be documented according to the javadoc tool specification [3](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html).
+In a class of your choice, each public method it contains must be documented according to the javadoc tool specification [[3]](https://www.oracle.com/technical-resources/articles/java/javadoc-tool.html).
 
 *Note*: For anything that is not clear from the pronunciation you can make your own assumptions and assumptions. The pronunciation outlines the basic requirements for the implementation, however you can make your own design assumptions trying to make the implementation more realistic without making the implementation complex.
 
@@ -102,7 +102,7 @@ In a class of your choice, each public method it contains must be documented acc
 ## Project's Report
 
 > This is the English translation of the project's report.  
-> To view the original description, in Greek, please refer to the document [here](multimedia24-ntua/documentation/GREEK_report.pdf).
+> To view the original description, in Greek, please refer to the document [here](GREEK_report.pdf).
 
 ---
 
@@ -111,7 +111,7 @@ In a class of your choice, each public method it contains must be documented acc
 Ioannis Tsantilas, 03120883  
 **Repository & Setup**
 
-The project implementation includes specific `.jar` files, which are too large to be pushed to the repository. For this reason, I have created a README file in which I give instructions on how to setup the project [here](multimedia24-ntua/README.md).
+The project implementation includes specific `.jar` files, which are too large to be pushed to the repository. For this reason, I have created a README file in which I give instructions on how to setup the project [here](../README.md).
 
 ---
 
@@ -176,9 +176,9 @@ The retrieval and refreshing of the application data was done according to the p
 
 ### Javadoc Documentation
 
-All classes within ```/multimedia24-ntua/src/``` were described in Javadoc. However, I recommend the [MainController.java](src/controllers/MainController.java) as it has more public classes.
+All classes within ```/multimedia24-ntua/src/``` were described in Javadoc. However, I recommend the [MainController.java](../src/controllers/MainController.java) as it has more public classes.
 
-To see all the classes in detail, you can open the [index.html](docs/index.html) file in your favorite browser.
+To see all the classes in detail, you can open the [index.html](../docs/index.html) file in your favorite browser.
 
 In case there is a problem with the file, run the following command at ```/multimedia24-ntua/src/```:
    ```
