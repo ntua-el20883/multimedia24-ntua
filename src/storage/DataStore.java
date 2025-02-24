@@ -36,10 +36,14 @@ public class DataStore {
     private JSONHandler jsonHandler;
 
     // File paths for JSON data
-    private static final String TASKS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/tasks.json";
-    private static final String CATEGORIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/categories.json";
-    private static final String PRIORITIES_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/priorities.json";
-    private static final String REMINDERS_FILE = "C:/Users/juant/Documents/Java_Projects/multimedia24-ntua/medialab/reminders.json";
+    private static final String TASKS_FILE = System.getProperty("user.dir") + File.separator + "medialab"
+            + File.separator + "tasks.json";
+    private static final String CATEGORIES_FILE = System.getProperty("user.dir") + File.separator + "medialab"
+            + File.separator + "categories.json";
+    private static final String PRIORITIES_FILE = System.getProperty("user.dir") + File.separator + "medialab"
+            + File.separator + "priorities.json";
+    private static final String REMINDERS_FILE = System.getProperty("user.dir") + File.separator + "medialab"
+            + File.separator + "reminders.json";
 
     /**
      * Private constructor for singleton usage. Initializes empty lists
