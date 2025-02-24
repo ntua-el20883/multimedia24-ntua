@@ -1,6 +1,10 @@
-# Task Management System - Setup Guide
+# Task Management System
 
-## Prerequisites
+In the context of the project a Task Management System will be implemented. The application will allow the user to create, edit, and monitor the available tasks.  In addition, the user will be able to manage multiple tasks, set priorities and deadlines, and receive reminders for upcoming tasks.
+
+---
+
+## Prerequisites - Setup Guide for Windows
 
 Follow these steps to set up your environment successfully.
 
@@ -9,7 +13,7 @@ Follow these steps to set up your environment successfully.
 ### **Java**  
 *Mandatory programming language for this project.*
 
-1. **Download Java JDK 23 for Windows**  
+1. **Download Java JDK 23 (for Windows)**  
    [Download JDK-23](https://download.oracle.com/java/23/latest/jdk-23_windows-x64_bin.exe)
 
 2. **Install Java**  
@@ -56,7 +60,7 @@ Follow these steps to set up your environment successfully.
      ```
      javafx-sdk-23.0.1
      ```
-   - Move `javafx-sdk-23.0.1` to the project directory:  
+   - Move `javafx-sdk-23.0.1` to the project directory (you'll need to create the lib folder in the project's root):  
      ```
      C:\path\to\multimedia24-ntua\lib
      ```
@@ -64,7 +68,7 @@ Follow these steps to set up your environment successfully.
 ---
 
 ### **Jackson**  
-*Used for reading `.json` files. Alternatively, you can use Gson.*
+*Used for reading `.json` files.*
 
 1. **Download Jackson Packages**  
    Download the following `.jar` files by navigating to the provided links. Choose the package that exactly matches the titles below (usually the 9th option in the list).
@@ -73,7 +77,6 @@ Follow these steps to set up your environment successfully.
    - [**jackson-core-2.18.1.jar**](https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.18.1/)
    - [**jackson-databind-2.18.1.jar**](https://repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.18.1/)
    - [**jackson-datatype-j*sr310**](https://repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.18.1/jackson-datatype-jsr310-2.18.1.jar)
-   - [**gson-2.11.0.jar**](https://repo1.maven.org/maven2/com/google/code/gson/gson/2.11.0/gson-2.11.0.jar)
 
 2. **Place Files in the `lib` Directory**  
    After downloading, move the `.jar` files to:  
@@ -110,13 +113,29 @@ If you're using VS-Code, ***Extension Pack for Java*** is a collection of popula
 
 ---
 
+## Javadoc Documentation
 
-# Project Description
+All classes within ```/multimedia24-ntua/src/``` were described in Javadoc. However, I recommend the [MainController.java](src/controllers/MainController.java) as it has more public classes.
 
-## **Section 1: Design and Implementation of Logic**
+To see all the classes in detail, you can open the [index.html](docs/index.html) file in your favorite browser.
+
+In case there is a problem with the file, run the following command at ```/multimedia24-ntua/src/```:
+   ```
+   Javadoc -d ../docs -sourcepath . -subpackages controllers:model:view:storage -classpath "..\lib\javafx-sdk-23.0.1\lib\*;. \lib\jackson-annotations-2.18.1.jar;..\lib\jackson-core-2.18.1.jar;..\lib\jackson-databind-2.18.1.jar;..\lib\jackson-datatype-jsr310-2.18.1.jar"
+   ```
+
+---
+
+## Project's Description
+
+> For the original description of the project's requirements, please refer to the original document available [here](documentation/GREEK_description_v1.pdf).  
+> For the project's report, in Greek, please refer to the document [here](documentation/GREEK_report.pdf).   
+> For the English translation of both the project's description and report (also provided below), please refer to the document [here](documentation/README.md).   
+
+### **Section 1: Design and Implementation of Logic**
 Description of the Entities and Attributes. Inside the [] is the format or mandatory values the Attributes will take.
 
-### **Task**
+#### **Task**
 - **Title**
 - **Description**
 - **Category**: `["Default", ...]`
@@ -124,27 +143,27 @@ Description of the Entities and Attributes. Inside the [] is the format or manda
 - **Deadline**: `["dd/mm/yyyy"]`
 - **Status**: `["Open", "In Progress", "Postponed", "Completed", "Delayed"]`
 
-#### **Points to Consider**
+##### **Points to Consider**
 - A new task has default status `"Open"`.
 - If the current date is past the deadline, the status should automatically be updated to `"Delayed"`.
 - The user can create a new Task, modify an existing one (all attributes except Status) and delete one (in which case its corresponding Reminders (if they exist) should also be deleted).
 
 ---
 
-### **Category**
+#### **Category**
 - **Name**
 
-#### **Points to Consider**
+##### **Points to Consider**
 - A Task belongs to exactly one Category.
 - If the user does not specify the Category of a new Task, the Category is `"Default"`.
 - The user can create new Categories, modify the name of existing ones and delete (in which case its corresponding Tasks (if they exist) should also be deleted).
 
 ---
 
-### **Reminder**
+#### **Reminder**
 - **Date**
 
-#### **Points to Consider**
+##### **Points to Consider**
 - Valid Reminder dates: `"1 day before Deadline"`, `"1 week before Deadline"`, `"1 month before Deadline"`, or custom dates before the Deadline.
 - Reminders belong to exactly one Task.
 - Tasks may have multiple Reminders.
@@ -154,11 +173,10 @@ Description of the Entities and Attributes. Inside the [] is the format or manda
 
 ---
 
-### **Priority**
+#### **Priority**
 - **Name**: `["Default", ...]`
-- **Value**: `["0", ...]`
 
-#### **Points to Consider**
+##### **Points to Consider**
 - If the user doesn't assign a Priority to a new Task, its Priority will be set to the default Priority, with  `Name: "Default"` and  `Value: "0"`.
 - Larger Values indicate higher Priority.
 - Priority Values must be unique and integers > 0.
@@ -167,7 +185,7 @@ Description of the Entities and Attributes. Inside the [] is the format or manda
 
 ---
 
-### **Search Filters for Tasks**
+#### **Search Filters for Tasks**
 Users can search Tasks using any combination of these criteria:
 - **Title**
 - **Category**
@@ -175,12 +193,12 @@ Users can search Tasks using any combination of these criteria:
 
 ---
 
-## **Section 2: Storage and Retrieval of App Information**
+### **Section 2: Storage and Retrieval of App Information**
 - Data is stored in JSON files in the `medialab` directory.
 - Decide  and  define  your  own  organization  (data  schema)  for  the JSON  data  and  the  set  of  files  that  will  be  used  to  store  the  App  data.  
 - Implement  through  the  appropriate  classes  the  methods  that  will  allow you to retrieve the information that the files have and initialize the appropriate objects in your App and refresh the files so that the overall state can be maintained between intermittent runs of the App.
 
-### **Logic to retrieve and update the App data**
+#### **Logic to retrieve and update the App data**
 - **Initialization**: You should be retrieving all the information in the JSON files and initializing the corresponding objects in your App at the same time.
 - **Execution**: The  App  will  use  the  state  information  retrieved in  program  memory  during  initialization.  All  operations  related  to  Tasks  and Reminders managed by the app will be executed based on the information in program memory.
 - **Termination**: JSON  files  with  system  state  information  will  be refreshed  exclusively  before  App  termination.  The  implementation shall store in the corresponding JSON files the total state of the App at the time of termination.
