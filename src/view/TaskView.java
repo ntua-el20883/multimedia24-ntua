@@ -34,6 +34,8 @@ public class TaskView {
     private TextField titleSearchField;
     private ComboBox<String> categorySearchBox;
     private ComboBox<String> prioritySearchBox;
+    private ComboBox<String> statusSearchBox;
+    private DatePicker deadlineSearchPicker;
     private Button searchBtn;
 
     /**
@@ -52,7 +54,7 @@ public class TaskView {
         stage.initOwner(owner);
 
         root = new BorderPane();
-        scene = new Scene(root, 600, 450);
+        scene = new Scene(root, 1200, 600);
 
         // Initialize UI Components
         initializeUI(tasks, categories, priorities);
@@ -95,12 +97,26 @@ public class TaskView {
         prioritySearchBox.getItems().addAll(priorities);
         prioritySearchBox.setValue("Any");
 
+        statusSearchBox = new ComboBox<>();
+        statusSearchBox.getItems().add("Any");
+        statusSearchBox.getItems().addAll("Open", "In Progress", "Completed", "Delayed", "Postponed");
+        statusSearchBox.setValue("Any");
+
+        deadlineSearchPicker = new DatePicker();
+        deadlineSearchPicker.setPromptText("Deadline");
+
+        Button clearDeadlineBtn = new Button("Clear Deadline");
+        clearDeadlineBtn.setOnAction(e -> deadlineSearchPicker.setValue(null));
+
         searchBtn = new Button("Search");
 
         searchBox.getChildren().addAll(
                 new Label("Title:"), titleSearchField,
                 new Label("Category:"), categorySearchBox,
                 new Label("Priority:"), prioritySearchBox,
+                new Label("Status:"), statusSearchBox,
+                new Label("Deadline:"), deadlineSearchPicker,
+                clearDeadlineBtn,
                 searchBtn);
 
         // Add the search panel above the task list
@@ -120,6 +136,7 @@ public class TaskView {
                 } else {
                     // Show some key info in a single line
                     setText(task.getTitle() + " | " + task.getCategory() + " | " + task.getPriority() + " | "
+                            + task.getStatus() + " | "
                             + task.getDeadline());
                 }
             }
@@ -236,5 +253,13 @@ public class TaskView {
     public void refreshTaskList(List<Task> tasks) {
         taskListView.getItems().clear();
         taskListView.getItems().addAll(tasks);
+    }
+
+    public ComboBox<String> getStatusSearchBox() {
+        return statusSearchBox;
+    }
+
+    public DatePicker getDeadlineSearchPicker() {
+        return deadlineSearchPicker;
     }
 }

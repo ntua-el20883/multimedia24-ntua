@@ -158,6 +158,9 @@ The project structure is characterized by four corresponding entities: **task**,
 - There is a sub-case in this rule: if the deadline is set with a default option, there is a chance that the new reminder date will be in the past. In this case, the user is notified with a corresponding window and encouraged to check his/her reminders.
   - For example, if today is `10/02/25`, a task with a deadline of `20/03/25` and a reminder of `20/02/25` (via the "1 month before" option) – if the user changes the deadline to `09/03/25`, then the reminder will change to `09/02/25`, which is in the past. This reminder will remain, and the user will be prompted to check their reminders.
 
+#### Task Search 
+The user has the option to search for tasks (within Task Management) based on the filters: title, category, priority, status and deadline, in which case they select a date and all tasks with a deadline **up to** that date are displayed. 
+
 ---
 
 ### Implementation

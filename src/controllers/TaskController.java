@@ -64,11 +64,15 @@ public class TaskController {
         String titleQuery = taskView.getTitleSearchField().getText().trim().toLowerCase();
         String categoryQuery = taskView.getCategorySearchBox().getValue();
         String priorityQuery = taskView.getPrioritySearchBox().getValue();
+        String statusQuery = taskView.getStatusSearchBox().getValue();
+        LocalDate deadlineQuery = taskView.getDeadlineSearchPicker().getValue(); 
 
         List<Task> filteredTasks = dataStore.getAllTasks().stream()
                 .filter(task -> titleQuery.isEmpty() || task.getTitle().toLowerCase().contains(titleQuery))
                 .filter(task -> "Any".equals(categoryQuery) || task.getCategory().equalsIgnoreCase(categoryQuery))
                 .filter(task -> "Any".equals(priorityQuery) || task.getPriority().equalsIgnoreCase(priorityQuery))
+                .filter(task -> "Any".equals(statusQuery) || task.getStatus().equalsIgnoreCase(statusQuery))
+                .filter(task -> deadlineQuery == null || task.getDeadline().isBefore(deadlineQuery))
                 .toList();
 
         taskView.refreshTaskList(filteredTasks);
