@@ -40,4 +40,102 @@
   "priority" : "Low",
   "deadline" : "2023-01-27",
   "status" : "Delayed"
+}, {
+  "title" : "Submit Expense Report",
+  "description" : "Compile and submit the monthly expense report.",
+  "category" : "Work",
+  "priority" : "Medium",
+  "deadline" : "2025-07-15",
+  "status" : "Open"
+}, {
+  "title" : "Plan Birthday Party",
+  "description" : "Organize a surprise birthday party for a friend.",
+  "category" : "Personal",
+  "priority" : "High",
+  "deadline" : "2025-02-28",
+  "status" : "In Progress"
+}, {
+  "title" : "Schedule Dentist Appointment",
+  "description" : "Book a routine check-up appointment with the dentist.",
+  "category" : "Personal",
+  "priority" : "Low",
+  "deadline" : "2025-03-02",
+  "status" : "Open"
+}, {
+  "title" : "Finish Coding Assignment",
+  "description" : "Complete the Java coding assignment for the course.",
+  "category" : "Work",
+  "priority" : "High",
+  "deadline" : "2025-07-12",
+  "status" : "In Progress"
+}, {
+  "title" : "Book Hotel for Conference",
+  "description" : "Reserve a hotel room for the upcoming work conference.",
+  "category" : "Work",
+  "priority" : "Medium",
+  "deadline" : "2025-07-25",
+  "status" : "Open"
+}, {
+  "title" : "Renew Car Insurance",
+  "description" : "Renew the car insurance policy before it expires.",
+  "category" : "Urgent",
+  "priority" : "High",
+  "deadline" : "2025-02-05",
+  "status" : "Delayed"
+}, {
+  "title" : "Buy Birthday Gift",
+  "description" : "Purchase a thoughtful gift for a family member's birthday.",
+  "category" : "Personal",
+  "priority" : "Low",
+  "deadline" : "2025-02-18",
+  "status" : "Delayed"
+}, {
+  "title" : "Attend Webinar",
+  "description" : "Participate in an online webinar about personal finance.",
+  "category" : "Optional",
+  "priority" : "Default",
+  "deadline" : "2025-07-22",
+  "status" : "Postponed"
+}, {
+  "title" : "Prepare Presentation",
+  "description" : "Develop slides for the upcoming project presentation.",
+  "category" : "Work",
+  "priority" : "High",
+  "deadline" : "2025-07-19",
+  "status" : "In Progress"
+}, {
+  "title" : "Grocery Shopping",
+  "description" : "Buy groceries for the week and plan meals.",
+  "category" : "Personal",
+  "priority" : "Medium",
+  "deadline" : "2025-07-08",
+  "status" : "Open"
+}, {
+  "title" : "Update Resume",
+  "description" : "Revise and update the resume with recent projects and experiences.",
+  "category" : "Optional",
+  "priority" : "Low",
+  "deadline" : "2025-07-30",
+  "status" : "Open"
+}, {
+  "title" : "Schedule Team Building Event",
+  "description" : "Organize a team building event to improve department cohesion.",
+  "category" : "Work",
+  "priority" : "Medium",
+  "deadline" : "2025-07-28",
+  "status" : "Open"
+}, {
+  "title" : "Review System Documentation",
+  "description" : "Review and update the system documentation to ensure it reflects the current implementation.",
+  "category" : "Default",
+  "priority" : "Default",
+  "deadline" : "2025-01-15",
+  "status" : "Delayed"
+}, {
+  "title" : "Update Software Licenses",
+  "description" : "Verify and update all software license information to ensure compliance.",
+  "category" : "Default",
+  "priority" : "High",
+  "deadline" : "2025-08-20",
+  "status" : "Open"
 } ]
